@@ -3,861 +3,1138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تتبع صحتك - حاسبة السعرات والقيمة الغذائية</title>
+    <title>تطبيق صحتي وجدولي - حاسبة السعرات والمنظم اليومي</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Cairo & Tajawal -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Tajawal', 'Cairo', sans-serif;
-            background-color: #0f172a;
+            background-color: #0b0f19;
             color: #f8fafc;
         }
         ::-webkit-scrollbar {
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #1e293b;
+            background: #111827;
         }
         ::-webkit-scrollbar-thumb {
-            background: #475569;
+            background: #374151;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
+            background: #4b5563;
         }
         .card-glass {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
         }
         .glow-emerald {
             box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
         }
-        .badge-cat {
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-weight: 600;
+        .glow-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
+        }
+        .tab-btn.active {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.4);
+        }
+        .day-tab.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #022c22;
+            font-weight: 800;
         }
     </style>
 </head>
-<body class="text-slate-100 antialiased min-h-screen flex flex-col bg-slate-900">
+<body class="text-slate-100 antialiased min-h-screen flex flex-col bg-slate-950 selection:bg-emerald-500 selection:text-slate-950">
 
-    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+    <!-- Header Navbar -->
+    <header class="bg-slate-900/90 border-b border-slate-800/80 sticky top-0 z-40 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="showSetupScreen()">
+            <div class="flex items-center space-x-3 space-x-reverse">
                 <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
-                    <i class="fa-solid fa-utensils text-xl text-slate-950"></i>
+                    <i class="fa-solid fa-heart-pulse text-xl text-slate-950"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold leading-none text-white tracking-wide">صِحَّتُكَ <span class="text-xs text-emerald-400 font-normal">| Nutrition Tracker</span></h1>
-                    <p class="text-[11px] text-slate-400 mt-0.5">تتبع السعرات والأطعمة المصرية والعربية</p>
+                    <h1 class="text-lg font-black leading-none text-white tracking-wide">صِحَّتِي & جَدْوَلِي</h1>
+                    <p class="text-[11px] text-slate-400 mt-0.5">الحاسبة والمنظم اليومي المتكامل</p>
                 </div>
             </div>
-            
-            <div id="navActions" class="hidden flex items-center space-x-2 space-x-reverse">
-                <button onclick="showSetupScreen()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-sm"></i>
-                    <span>تعديل الأهداف</span>
-                </button>
-                <button onclick="resetDailyLog()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-right text-xs"></i>
-                    <span class="hidden sm:inline">إعادة ضبط اليوم</span>
-                </button>
+
+            <!-- User Auth Bar / Actions -->
+            <div id="topUserBar" class="flex items-center space-x-3 space-x-reverse">
+                <!-- Logged User Controls -->
+                <div id="userLoggedInView" class="hidden flex items-center gap-3">
+                    <div class="hidden md:flex flex-col text-left">
+                        <span id="currentUserName" class="text-xs font-bold text-emerald-400 text-right">مستخدم</span>
+                        <span class="text-[10px] text-slate-400">حساب موثق وقاعدة بيانات</span>
+                    </div>
+                    <button onclick="logoutUser()" class="bg-slate-800 hover:bg-rose-500/20 text-rose-400 border border-slate-700 hover:border-rose-500/30 text-xs px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="تسجيل الخروج">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">خروج</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
 
-        <!-- VIEW 1: ONBOARDING / TARGET SETUP SCREEN -->
-        <section id="setupView" class="max-w-2xl mx-auto py-4">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-3xl mb-4 shadow-xl glow-emerald">
-                    <i class="fa-solid fa-bullseye"></i>
+        <!-- AUTH MODAL / VIEW (Shown when no user is logged in) -->
+        <section id="authSection" class="max-w-md mx-auto my-8">
+            <div class="card-glass rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl mb-3 shadow-lg glow-emerald">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-white" id="authTitle">تسجيل الدخول لحسابك</h2>
+                    <p class="text-xs text-slate-400 mt-1" id="authSub">يتم حفظ بياناتك وجدولك دائمًا باسم حسابك في قاعدة البيانات</p>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">حدد أهدافك الغذائية اليومية</h2>
-                <p class="text-slate-400 text-sm max-w-md mx-auto">أدخل هدفك السنوي أو اليومي مباشرة، أو استخدم الحاسبة الذكية المدمجة لاقتراح احتياجك الدقيق من الطاقة</p>
-            </div>
 
-            <!-- Smart Calculator Toggle Accordion -->
-            <div class="card-glass rounded-2xl p-5 mb-6 border border-emerald-500/20">
-                <button onclick="toggleSmartCalc()" class="w-full flex justify-between items-center text-right font-bold text-sm text-emerald-400 hover:text-emerald-300">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        حاسبة السعرات الذكية (احسب احتياجك بناءً على وزنك وهدفك)
-                    </span>
-                    <i id="calcChevron" class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
-                </button>
+                <!-- Tabs: Login / Register -->
+                <div class="grid grid-cols-2 gap-2 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 mb-6 text-xs font-bold">
+                    <button id="tabAuthLogin" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl transition text-emerald-400 bg-slate-800 border border-slate-700">دخول</button>
+                    <button id="tabAuthRegister" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl transition text-slate-400 hover:text-white">حساب جديد</button>
+                </div>
 
-                <div id="smartCalcForm" class="hidden mt-5 pt-4 border-t border-slate-700/60 text-xs space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-slate-400 mb-1">الوزن (كجم)</label>
-                            <input type="number" id="calcWeight" placeholder="مثال: 75" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 mb-1">الطول (سم)</label>
-                            <input type="number" id="calcHeight" placeholder="مثال: 175" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 mb-1">العمر (سنة)</label>
-                            <input type="number" id="calcAge" placeholder="مثال: 25" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-500">
+                <!-- Auth Form -->
+                <form onsubmit="handleAuthSubmit(event)" class="space-y-4 text-xs">
+                    <div id="nameFieldGroup" class="hidden">
+                        <label class="block text-slate-300 font-bold mb-1">الاسم الشخصي</label>
+                        <div class="relative">
+                            <input type="text" id="authFullName" placeholder="مثال: أحمد محمد" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 pr-10 text-white outline-none focus:border-emerald-500 transition">
+                            <i class="fa-solid fa-id-card absolute right-3.5 top-3.5 text-slate-500"></i>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-slate-400 mb-1">النوع</label>
-                            <select id="calcGender" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-500">
-                                <option value="male">ذكر</option>
-                                <option value="female">أنثى</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 mb-1">الهدف الصحي</label>
-                            <select id="calcGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-500">
-                                <option value="cut">تنشيف وخسارة دهون (-20%)</option>
-                                <option value="maintain" selected>المحافظة على الوزن الحالي</option>
-                                <option value="bulk">تضخيم وبناء عضلات (+15%)</option>
-                            </select>
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">اسم المستخدم (Username)</label>
+                        <div class="relative">
+                            <input type="text" id="authUsername" required placeholder="ادخل اسم المستخدم" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 pr-10 text-white outline-none focus:border-emerald-500 transition">
+                            <i class="fa-solid fa-user absolute right-3.5 top-3.5 text-slate-500"></i>
                         </div>
                     </div>
 
-                    <button onclick="calculateSmartGoals()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold py-2.5 rounded-xl border border-emerald-500/30 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calculator"></i> تطبيق الاقتراح على النموذج
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">كلمة المرور (Password)</label>
+                        <div class="relative">
+                            <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 pr-10 text-white outline-none focus:border-emerald-500 transition">
+                            <i class="fa-solid fa-lock absolute right-3.5 top-3.5 text-slate-500"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black py-3.5 rounded-xl text-sm shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 mt-2">
+                        <span>دخول لحسابي</span>
+                        <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                </div>
-            </div>
-
-            <!-- Target Form -->
-            <div class="card-glass rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-2">
-                        <i class="fa-solid fa-fire text-amber-400"></i> الهدف اليومي من السعرات الحرارية (kcal)
-                    </label>
-                    <input type="number" id="setupCalories" value="2000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-lg font-bold text-amber-400 focus:outline-none focus:border-amber-400 transition">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-drumstick-bite text-blue-400"></i> البروتين (جرام)
-                        </label>
-                        <input type="number" id="setupProtein" value="130" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-blue-400 focus:outline-none focus:border-blue-400 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-wheat-awn text-amber-500"></i> الكربوهيدرات (جرام)
-                        </label>
-                        <input type="number" id="setupCarbs" value="220" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-amber-500 focus:outline-none focus:border-amber-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-oil-well text-rose-400"></i> الدهون (جرام)
-                        </label>
-                        <input type="number" id="setupFat" value="60" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-rose-400 focus:outline-none focus:border-rose-400 transition">
-                    </div>
-                </div>
-
-                <button onclick="startTracking()" class="w-full mt-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black py-3.5 rounded-xl text-base shadow-lg shadow-emerald-500/25 transition transform active:scale-[0.99] flex items-center justify-center gap-2">
-                    <span>بدء تتبع وجبات اليوم</span>
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+                </form>
             </div>
         </section>
 
-        <!-- VIEW 2: MAIN DASHBOARD & FOOD TRACKER -->
-        <section id="dashboardView" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- MAIN DASHBOARD CONTENT (Visible only when logged in) -->
+        <div id="mainAppContent" class="hidden space-y-6">
 
-            <!-- LEFT COLUMN: ADD FOOD & SEARCH -->
-            <div class="lg:col-span-5 flex flex-col gap-6">
-                
-                <div class="card-glass rounded-2xl p-5 border border-slate-800">
-                    <h2 class="text-base font-bold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass text-emerald-400"></i>
-                        إضافة أكل من القائمة
-                    </h2>
-
-                    <!-- Category Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-3" id="categoryFilterContainer">
-                        <button onclick="filterCategory('all')" class="cat-btn active border border-emerald-500 bg-emerald-500/20 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-semibold">الكل</button>
-                        <button onclick="filterCategory('بروتينات')" class="cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white">بروتينات</button>
-                        <button onclick="filterCategory('نشويات')" class="cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white">نشويات</button>
-                        <button onclick="filterCategory('ألبان وأجبان')" class="cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white">ألبان وأجبان</button>
-                        <button onclick="filterCategory('مكسرات وبذور')" class="cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white">مكسرات وبذور</button>
-                        <button onclick="filterCategory('أكلات شعبية وطواجن')" class="cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white">أكلات شعبية</button>
-                    </div>
-
-                    <div class="relative mb-4">
-                        <div class="relative">
-                            <input type="text" id="foodSearch" oninput="handleSearch(this.value)" placeholder="ابحث (كبدة، عيش بلدي، شوفان، تونة، بشاميل...)" 
-                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-500 text-sm transition text-white placeholder-slate-500">
-                            <i class="fa-solid fa-search absolute left-3 top-3.5 text-slate-500"></i>
-                        </div>
-
-                        <!-- Dropdown Results -->
-                        <div id="searchResults" class="hidden absolute z-30 w-full bg-slate-800 border border-slate-700 rounded-xl mt-1 max-h-64 overflow-y-auto shadow-2xl"></div>
-                    </div>
-
-                    <!-- Selected Food Details / Portion Form -->
-                    <div id="selectedFoodBox" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-4 mb-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <h3 id="selectedFoodName" class="font-bold text-emerald-300 text-base">---</h3>
-                                <p id="selectedFoodCategory" class="text-xs text-slate-400">---</p>
-                            </div>
-                            <span id="selectedFoodBaseCal" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-2.5 py-1 rounded-full">-- سعرة</span>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2 my-3 text-xs text-slate-300">
-                            <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">بروتين: <span id="selectedFoodProtein" class="font-bold text-blue-400">0</span>g</div>
-                            <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">كارب: <span id="selectedFoodCarbs" class="font-bold text-amber-400">0</span>g</div>
-                            <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">دهون: <span id="selectedFoodFat" class="font-bold text-rose-400">0</span>g</div>
-                            <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800 truncate">فوائد: <span id="selectedFoodMicro" class="font-bold text-emerald-400">-</span></div>
-                        </div>
-
-                        <!-- Unit Portion Selector -->
-                        <div class="space-y-2 mt-3">
-                            <label class="block text-[11px] font-semibold text-slate-400">طريقة الحساب والكمية:</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <select id="portionUnit" onchange="handleUnitChange()" class="bg-slate-900 border border-slate-700 text-xs rounded-lg p-2 text-white outline-none focus:border-emerald-500">
-                                    <option value="grams">جرام (g)</option>
-                                    <option value="serving" id="unitServingOpt" class="hidden">حصة / وحدة</option>
-                                </select>
-                                <input type="number" id="foodGrams" value="100" min="1" max="2000" oninput="updateSelectedPreview()"
-                                    class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-bold text-center text-white focus:border-emerald-500 outline-none">
-                            </div>
-                        </div>
-
-                        <button onclick="addSelectedFoodToLog()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 mt-4">
-                            <i class="fa-solid fa-plus"></i> إضافة إلى وجبات اليوم
-                        </button>
-                    </div>
-
-                    <button onclick="toggleCustomFoodForm()" class="w-full text-xs text-slate-400 hover:text-emerald-400 font-semibold text-center py-2.5 bg-slate-800/80 hover:bg-slate-800 rounded-xl transition flex items-center justify-center gap-2 border border-slate-700/50">
-                        <i class="fa-solid fa-pen-to-square"></i> أضف وجبة مخصصة غير موجودة
+            <!-- MAIN TOP NAVIGATION TABS -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-3">
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <button onclick="switchMainTab('tracker')" id="btnTabTracker" class="tab-btn active border border-emerald-500/30 text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>تتبع السعرات والأكل</span>
                     </button>
+                    <button onclick="switchMainTab('planner')" id="btnTabPlanner" class="tab-btn border border-slate-700 text-slate-400 hover:text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>الجدول الأسبوعي الشامل</span>
+                    </button>
+                    <button onclick="switchMainTab('settings')" id="btnTabSettings" class="tab-btn border border-slate-700 text-slate-400 hover:text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>تعديل الأهداف</span>
+                    </button>
+                </div>
 
-                    <!-- Custom Food Form (Collapsible) -->
-                    <div id="customFoodForm" class="hidden mt-4 pt-4 border-t border-slate-800">
-                        <h3 class="text-xs font-bold text-slate-300 mb-3">إدخال طبق مخصص</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <input type="text" id="customName" placeholder="اسم الوجبة (مثلاً: طاجن ملوخية)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+                <div class="text-xs text-slate-400 font-semibold" id="topDateStr">--</div>
+            </div>
+
+            <!-- SECTION 1: CALORIE & NUTRITION TRACKER -->
+            <section id="secTracker" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- LEFT COLUMN: SEARCH & ADD FOODS -->
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <div class="card-glass rounded-2xl p-5 border border-slate-800">
+                        <h2 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-emerald-400"></i>
+                            بحث الأكل (أكثر من 100 عنصر)
+                        </h2>
+
+                        <!-- Category Filters -->
+                        <div class="flex flex-wrap gap-1.5 mb-3" id="catFilters">
+                            <button onclick="setCategoryFilter('all')" class="cat-pill active border border-emerald-500 bg-emerald-500/20 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold">الكل</button>
+                            <button onclick="setCategoryFilter('بروتينات ولحوم')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">لحوم وبروتين</button>
+                            <button onclick="setCategoryFilter('نشويات وحبوب')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">نشويات</button>
+                            <button onclick="setCategoryFilter('خضراوات وطازج')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">خضراوات</button>
+                            <button onclick="setCategoryFilter('فواكه')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">فواكه</button>
+                            <button onclick="setCategoryFilter('ألبان وأجبان')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">ألبان</button>
+                            <button onclick="setCategoryFilter('بقوليات ومكسرات')" class="cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white">بقوليات ومكسرات</button>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="relative mb-3">
+                            <input type="text" id="foodSearchInput" oninput="filterFoods(this.value)" placeholder="ابحث باسم الأكلة (فول، جبنة قريش، جرجير، كشري...)" 
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-500 text-xs transition text-white placeholder-slate-500">
+                            <i class="fa-solid fa-search absolute right-3.5 top-3.5 text-slate-500 text-xs"></i>
+                        </div>
+
+                        <!-- Food Selection Dropdown List -->
+                        <div id="foodDropdown" class="bg-slate-900/90 border border-slate-800 rounded-xl max-h-56 overflow-y-auto divide-y divide-slate-800/60 mb-4 hidden"></div>
+
+                        <!-- Selected Food Preview Form -->
+                        <div id="selectedFoodPreview" class="hidden bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 mb-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 id="prevFoodName" class="font-bold text-emerald-300 text-sm">---</h3>
+                                    <p id="prevFoodCategory" class="text-[10px] text-slate-400">---</p>
+                                </div>
+                                <span id="prevFoodCalBadge" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-2.5 py-0.5 rounded-full">-- kcal</span>
                             </div>
+
+                            <div class="grid grid-cols-2 gap-2 my-2 text-xs">
+                                <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-800">بروتين: <span id="prevFoodProt" class="font-bold text-blue-400">0</span>g</div>
+                                <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-800">كارب: <span id="prevFoodCarb" class="font-bold text-amber-400">0</span>g</div>
+                                <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-800">دهون: <span id="prevFoodFat" class="font-bold text-rose-400">0</span>g</div>
+                                <div class="bg-slate-900/90 p-2 rounded-lg border border-slate-800 truncate">فوائد: <span id="prevFoodMicro" class="font-bold text-emerald-400">-</span></div>
+                            </div>
+
+                            <!-- Portion Quantity Selector -->
+                            <div class="grid grid-cols-2 gap-2 mt-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">طريقة الحساب:</label>
+                                    <select id="portionUnitSelect" onchange="onPortionUnitChange()" class="w-full bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white outline-none focus:border-emerald-500">
+                                        <option value="grams">بالجرامات (g)</option>
+                                        <option value="serving" id="optServingUnit" class="hidden">حصة / وحدة</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">الكمية:</label>
+                                    <input type="number" id="portionAmountInput" value="100" min="1" max="3000" oninput="recalcSelectedPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs font-bold text-center text-white outline-none focus:border-emerald-500">
+                                </div>
+                            </div>
+
+                            <button onclick="confirmAddFoodToLog()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 mt-3">
+                                <i class="fa-solid fa-plus"></i> إضافة للوجبات اليومية
+                            </button>
+                        </div>
+
+                        <!-- Custom Food Form Accordion Trigger -->
+                        <button onclick="toggleCustomFoodAccordion()" class="w-full text-xs text-slate-400 hover:text-emerald-400 font-bold py-2.5 bg-slate-900/90 hover:bg-slate-900 rounded-xl transition flex items-center justify-center gap-2 border border-slate-800">
+                            <i class="fa-solid fa-square-plus"></i> إضافة وجبة أو صنف مخصص
+                        </button>
+
+                        <div id="customFoodAccordion" class="hidden mt-3 pt-3 border-t border-slate-800 space-y-3">
+                            <input type="text" id="custFoodName" placeholder="اسم الوجبة (مثلاً: طاجن ملوخية بالفراخ)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-[10px] text-slate-400">الوزن (جرام)</label>
-                                    <input type="number" id="customGrams" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+                                    <input type="number" id="custFoodGrams" value="150" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-slate-400">السعرات (kcal)</label>
-                                    <input type="number" id="customCalories" placeholder="250" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+                                    <input type="number" id="custFoodCal" placeholder="250" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-2">
                                 <div>
                                     <label class="text-[10px] text-slate-400">بروتين (g)</label>
-                                    <input type="number" id="customProtein" placeholder="20" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+                                    <input type="number" id="custFoodProt" placeholder="20" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-slate-400">كارب (g)</label>
-                                    <input type="number" id="customCarbs" placeholder="30" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+                                    <input type="number" id="custFoodCarb" placeholder="30" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-slate-400">دهون (g)</label>
-                                    <input type="number" id="customFat" placeholder="8" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+                                    <input type="number" id="custFoodFat" placeholder="8" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
                                 </div>
                             </div>
-                            <div>
-                                <input type="text" id="customMicro" placeholder="ملاحظات / فيتامينات (اختياري)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
-                            </div>
-                            <button onclick="addCustomFoodToLog()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold py-2 rounded-lg text-xs border border-emerald-500/30 transition">
-                                حفظ وإضافة اليوم
+                            <button onclick="addCustomMealLog()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold py-2 rounded-xl text-xs border border-emerald-500/30 transition">
+                                إضافة المخصص
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Add Chips -->
-                <div class="card-glass rounded-2xl p-5 border border-slate-800">
-                    <h3 class="text-xs font-bold text-slate-300 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-bolt text-amber-400"></i> أكلات سريعة الإضافة
-                    </h3>
-                    <div class="flex flex-wrap gap-1.5" id="quickAddChips"></div>
+                <!-- RIGHT COLUMN: SUMMARY & LOGGED MEALS -->
+                <div class="lg:col-span-7 flex flex-col gap-6">
+
+                    <!-- Daily Progress Overview -->
+                    <div class="card-glass rounded-3xl p-6 border border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 class="text-base font-black text-white">ملخص السعرات والماكروز</h2>
+                                <p class="text-xs text-slate-400">متابعة دقيقة لنسب اليوم</p>
+                            </div>
+                            <div class="text-right">
+                                <span id="dashTotalCal" class="text-3xl font-black text-emerald-400">0</span>
+                                <span class="text-xs text-slate-500">/ <span id="dashGoalCal">2000</span> kcal</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-900 rounded-full h-3.5 mb-2 overflow-hidden p-0.5 border border-slate-800">
+                            <div id="dashCalBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-400 font-bold mb-6">
+                            <span id="dashCalRemText">المتبقي: 2000 سعرة</span>
+                            <span id="dashCalPctText">0%</span>
+                        </div>
+
+                        <!-- Macro Cards Grid -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="bg-blue-950/20 border border-blue-500/20 p-3 rounded-2xl">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-blue-300">البروتين</span>
+                                    <i class="fa-solid fa-drumstick-bite text-blue-400 text-xs"></i>
+                                </div>
+                                <div class="text-lg font-black text-blue-300"><span id="dashTotalProt">0</span> <span class="text-xs font-normal">g</span></div>
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="dashBarProt" class="bg-blue-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <div class="text-[10px] text-slate-400 mt-1">الهدف: <span id="dashGoalProt">130</span>g</div>
+                            </div>
+
+                            <div class="bg-amber-950/20 border border-amber-500/20 p-3 rounded-2xl">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-amber-300">الكربوهيدرات</span>
+                                    <i class="fa-solid fa-wheat-awn text-amber-400 text-xs"></i>
+                                </div>
+                                <div class="text-lg font-black text-amber-300"><span id="dashTotalCarb">0</span> <span class="text-xs font-normal">g</span></div>
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="dashBarCarb" class="bg-amber-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <div class="text-[10px] text-slate-400 mt-1">الهدف: <span id="dashGoalCarb">220</span>g</div>
+                            </div>
+
+                            <div class="bg-rose-950/20 border border-rose-500/20 p-3 rounded-2xl">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-bold text-rose-300">الدهون</span>
+                                    <i class="fa-solid fa-oil-well text-rose-400 text-xs"></i>
+                                </div>
+                                <div class="text-lg font-black text-rose-300"><span id="dashTotalFat">0</span> <span class="text-xs font-normal">g</span></div>
+                                <div class="w-full bg-slate-900 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="dashBarFat" class="bg-rose-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <div class="text-[10px] text-slate-400 mt-1">الهدف: <span id="dashGoalFat">60</span>g</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logged Meals List -->
+                    <div class="card-glass rounded-3xl p-6 border border-slate-800 flex-grow">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-emerald-400"></i>
+                                الوجبات المسجلة اليوم (<span id="loggedMealCount">0</span>)
+                            </h3>
+                            <button onclick="clearTodayMeals()" class="text-xs text-rose-400 hover:underline">مسح الكل</button>
+                        </div>
+
+                        <div id="emptyMealPlaceholder" class="py-12 text-center">
+                            <div class="w-14 h-14 bg-slate-900 text-slate-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-slate-800">
+                                <i class="fa-solid fa-utensils text-xl"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-400">لم تقم بإضافة وجبات اليوم بعد</p>
+                        </div>
+
+                        <div id="loggedMealsContainer" class="space-y-3"></div>
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- RIGHT COLUMN: SUMMARY & LOGGED MEALS -->
-            <div class="lg:col-span-7 flex flex-col gap-6">
+            </section>
 
-                <!-- Daily Progress Card -->
-                <div class="card-glass rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
-                    <div class="flex justify-between items-center mb-4">
+            <!-- SECTION 2: WEEKLY SCHEDULE PLANNER (Sat-Fri) -->
+            <section id="secPlanner" class="hidden space-y-6">
+
+                <div class="card-glass rounded-3xl p-6 border border-slate-800">
+                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
                         <div>
-                            <h2 class="text-base font-bold text-white">ملخص السعرات والماكروز</h2>
-                            <p class="text-xs text-slate-400" id="currentDateDisplay"></p>
-                        </div>
-                        <div class="text-right">
-                            <span id="calorieTargetText" class="text-3xl font-black text-emerald-400">0</span>
-                            <span class="text-xs text-slate-500">/ <span id="goalCalorieVal">2000</span> kcal</span>
-                        </div>
-                    </div>
-
-                    <!-- Main Calorie Progress Bar -->
-                    <div class="w-full bg-slate-800/80 rounded-full h-3.5 mb-2 overflow-hidden p-0.5 border border-slate-700">
-                        <div id="calorieProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-slate-400 font-semibold mb-6">
-                        <span id="calorieRemainingText">المتبقي: 2000 سعرة</span>
-                        <span id="caloriePercentText">0%</span>
-                    </div>
-
-                    <!-- Macros Cards Grid -->
-                    <div class="grid grid-cols-3 gap-3">
-                        <!-- Protein Card -->
-                        <div class="bg-blue-950/30 border border-blue-500/20 p-3 rounded-xl">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-blue-300">البروتين</span>
-                                <i class="fa-solid fa-drumstick-bite text-blue-400 text-xs"></i>
-                            </div>
-                            <div class="text-base sm:text-lg font-black text-blue-300"><span id="totalProteinVal">0</span> <span class="text-xs font-normal">g</span></div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div id="proteinBar" class="bg-blue-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                            <div class="text-[10px] text-slate-400 mt-1">
-                                Target: <span id="targetProteinVal">130</span>g
-                            </div>
-                        </div>
-
-                        <!-- Carbs Card -->
-                        <div class="bg-amber-950/30 border border-amber-500/20 p-3 rounded-xl">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-amber-300">الكربوهيدرات</span>
-                                <i class="fa-solid fa-wheat-awn text-amber-400 text-xs"></i>
-                            </div>
-                            <div class="text-base sm:text-lg font-black text-amber-300"><span id="totalCarbsVal">0</span> <span class="text-xs font-normal">g</span></div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div id="carbsBar" class="bg-amber-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                            <div class="text-[10px] text-slate-400 mt-1">
-                                Target: <span id="targetCarbsVal">220</span>g
-                            </div>
-                        </div>
-
-                        <!-- Fats Card -->
-                        <div class="bg-rose-950/30 border border-rose-500/20 p-3 rounded-xl">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-rose-300">الدهون</span>
-                                <i class="fa-solid fa-oil-well text-rose-400 text-xs"></i>
-                            </div>
-                            <div class="text-base sm:text-lg font-black text-rose-300"><span id="totalFatVal">0</span> <span class="text-xs font-normal">g</span></div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div id="fatBar" class="bg-rose-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                            <div class="text-[10px] text-slate-400 mt-1">
-                                Target: <span id="targetFatVal">60</span>g
-                            </div>
+                            <h2 class="text-base font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-check text-emerald-400"></i>
+                                منظم الأسبوع الشامل (أكل • تمرين • مذاكرة)
+                            </h2>
+                            <p class="text-xs text-slate-400">خطط أسبوعك بالكامل واحفظ كل يوم بسهولة</p>
                         </div>
                     </div>
 
-                    <!-- Feedback Tip -->
-                    <div id="healthFeedback" class="mt-4 p-3 bg-slate-800/80 border border-slate-700 text-slate-300 text-xs rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-lightbulb text-amber-400 text-base"></i>
-                        <span id="feedbackText">تأكد من تنويع مصادر البروتين والألياف طوال اليوم للحصول على أفضل صحة ونشاط!</span>
+                    <!-- Day Tabs Selection -->
+                    <div class="grid grid-cols-7 gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 mb-6 text-xs text-center font-bold">
+                        <button onclick="selectPlannerDay('sat')" id="dayBtnSat" class="day-tab active py-2.5 rounded-xl transition">السبت</button>
+                        <button onclick="selectPlannerDay('sun')" id="dayBtnSun" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الأحد</button>
+                        <button onclick="selectPlannerDay('mon')" id="dayBtnMon" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الإثنين</button>
+                        <button onclick="selectPlannerDay('tue')" id="dayBtnTue" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الثلاثاء</button>
+                        <button onclick="selectPlannerDay('wed')" id="dayBtnWed" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الأربعاء</button>
+                        <button onclick="selectPlannerDay('thu')" id="dayBtnThu" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الخميس</button>
+                        <button onclick="selectPlannerDay('fri')" id="dayBtnFri" class="day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white">الجمعة</button>
                     </div>
+
+                    <!-- Selected Day Schedule Form -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        <!-- Meal Plan Box -->
+                        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3">
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                                <i class="fa-solid fa-bowl-food"></i>
+                                <span>جدول الأكل المخطط اليوم</span>
+                            </div>
+                            <textarea id="planMealsText" rows="6" placeholder="مثال:&#10;- الإفطار: 3 بيضات + 100g جبنة قريش + خيار&#10;- الغداء: صدر دجاج + أرز + طبق سلطة خضراء&#10;- العشاء: علبة زبادي يوناني + شوفان" 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 transition resize-none"></textarea>
+                        </div>
+
+                        <!-- Workout Routine Box -->
+                        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3">
+                            <div class="flex items-center gap-2 text-blue-400 font-bold text-xs">
+                                <i class="fa-solid fa-dumbbell"></i>
+                                <span>جدول التمرين والنشاط</span>
+                            </div>
+                            <textarea id="planWorkoutText" rows="6" placeholder="مثال:&#10;- تمرين بنش وترايسبس (4 جولات)&#10;- 20 دقيقة كارديو مشي سريع&#10;- إطالات وشرب 3 لتر ماء" 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-blue-500 transition resize-none"></textarea>
+                        </div>
+
+                        <!-- Study / Tasks Box -->
+                        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3">
+                            <div class="flex items-center gap-2 text-amber-400 font-bold text-xs">
+                                <i class="fa-solid fa-book-open"></i>
+                                <span>المذاكرة والمهام اليومية</span>
+                            </div>
+                            <textarea id="planStudyText" rows="6" placeholder="مثال:&#10;- مذاكرة فصل الأحياء ومراجعة الملخص&#10;- حل 30 سؤال رياضيات&#10;- قراءة 10 صفحات كتاب" 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-amber-500 transition resize-none"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="saveCurrentDaySchedule()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-6 py-3 rounded-xl text-xs shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>حفظ جدول اليوم بملفك</span>
+                        </button>
+                    </div>
+
                 </div>
 
-                <!-- Logged Meals List -->
-                <div class="card-glass rounded-2xl p-6 border border-slate-800 flex-grow">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-emerald-400"></i>
-                            وجبات اليوم المسجلة (<span id="mealCount">0</span>)
-                        </h2>
+            </section>
+
+            <!-- SECTION 3: TARGET GOALS SETTINGS -->
+            <section id="secSettings" class="hidden max-w-2xl mx-auto">
+                <div class="card-glass rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-6">
+                    <div class="text-center">
+                        <h2 class="text-lg font-black text-white mb-1">تعديل الأهداف الغذائية</h2>
+                        <p class="text-xs text-slate-400">تستطيع تعديل أهداف السعرات والماكروز في أي وقت</p>
                     </div>
 
-                    <!-- Empty State -->
-                    <div id="emptyMealState" class="py-12 text-center">
-                        <div class="w-16 h-16 bg-slate-800 text-slate-500 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-slate-700">
-                            <i class="fa-solid fa-utensils text-2xl"></i>
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block text-slate-300 font-bold mb-1.5 flex items-center gap-2">
+                                <i class="fa-solid fa-fire text-amber-400"></i> هدف السعرات اليومي (kcal)
+                            </label>
+                            <input type="number" id="settingCalGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-lg font-bold text-amber-400 outline-none focus:border-amber-400">
                         </div>
-                        <p class="text-sm font-semibold text-slate-300">لم تسجل أي طعام حتى الآن</p>
-                        <p class="text-xs text-slate-500 mt-1">ابحث عن الطعام في الجانب الأيمن أو اختر من الأكلات السريعة</p>
-                    </div>
 
-                    <!-- Meals List -->
-                    <div id="loggedMealsList" class="space-y-3"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1.5 text-blue-300">البروتين (جرام)</label>
+                                <input type="number" id="settingProtGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-blue-400 outline-none focus:border-blue-400">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1.5 text-amber-300">الكربوهيدرات (جرام)</label>
+                                <input type="number" id="settingCarbGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-amber-400 outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1.5 text-rose-300">الدهون (جرام)</label>
+                                <input type="number" id="settingFatGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-bold text-rose-400 outline-none focus:border-rose-400">
+                            </div>
+                        </div>
 
-                    <!-- Extra Nutrition Summary -->
-                    <div id="microSummaryBox" class="hidden mt-6 pt-4 border-t border-slate-800">
-                        <h3 class="text-xs font-bold text-slate-400 mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-leaf text-emerald-400"></i> الفيتامينات والمعادن المستفادة اليوم:
-                        </h3>
-                        <div id="microTags" class="flex flex-wrap gap-1.5 text-[11px]"></div>
+                        <button onclick="saveGoalsSettings()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3.5 rounded-xl text-xs shadow-lg transition">
+                            حفظ الإعدادات الجديدة
+                        </button>
                     </div>
                 </div>
+            </section>
 
-            </div>
-
-        </section>
+        </div>
 
     </main>
 
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-5 py-3 rounded-xl shadow-2xl border border-slate-700 z-50 hidden flex items-center gap-2">
+    <!-- Toast Notification -->
+    <div id="appToast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 z-50 hidden flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-        <span id="toastMessage">تم التحديث بنجاح</span>
+        <span id="toastMsg">تم الإجراء بنجاح</span>
     </div>
 
     <script>
-        // Database with specified food items
-        const foodDatabase = [
-            { id: 1, name: "كبدة بلدي مطهوة", category: "بروتينات", calories: 175, protein: 26.0, carbs: 4.0, fat: 5.0, micro: "حديد، فيتامين B12، B6", servingName: "قطعة / شريحة متوسطة", servingGrams: 90 },
-            { id: 2, name: "عيش بلدي مصري", category: "نشويات", calories: 275, protein: 9.0, carbs: 55.0, fat: 1.2, micro: "ألياف الردة، ب1، نياشين", servingName: "رغيف كامل", servingGrams: 100 },
-            { id: 3, name: "شوفان خام / مطبوخ", category: "نشويات", calories: 389, protein: 16.9, carbs: 66.0, fat: 6.9, micro: "بيتا جلوكان، ألياف، مغنيسيوم", servingName: "كوب شوفان (80g)", servingGrams: 80 },
-            { id: 4, name: "لبن (حليب) كامل الدسم", category: "ألبان وأجبان", calories: 60, protein: 3.2, carbs: 4.8, fat: 3.2, micro: "كالسيوم، فيتامين D", servingName: "كوب حليب (200ml)", servingGrams: 200 },
-            { id: 5, name: "زبادي طبيعي", category: "ألبان وأجبان", calories: 61, protein: 3.5, carbs: 4.7, fat: 3.3, micro: "بروبيوتيك، كالسيوم", servingName: "علبة زبادي صغيرة", servingGrams: 105 },
-            { id: 6, name: "تونة مصفاة من الزيت/الماء", category: "بروتينات", calories: 130, protein: 28.0, carbs: 0.0, fat: 1.0, micro: "أوميجا 3، سيلينيوم", servingName: "علبة تونة مصفاة", servingGrams: 140 },
-            { id: 7, name: "كفتة مشوية (لحم بقر)", category: "بروتينات", calories: 250, protein: 18.0, carbs: 3.0, fat: 18.0, micro: "بروتين، زنك، حديد", servingName: "صبع كفتة (50g)", servingGrams: 50 },
-            { id: 8, name: "مكرونة مطهوة", category: "نشويات", calories: 131, protein: 5.0, carbs: 25.0, fat: 1.0, micro: "طاقة وسريعة الامتصاص", servingName: "طبق صغير (150g)", servingGrams: 150 },
-            { id: 9, name: "أرز أبيض مطهو", category: "نشويات", calories: 130, protein: 2.7, carbs: 28.0, fat: 0.3, micro: "سهل الهضم، طاقة", servingName: "طبق أرز (150g)", servingGrams: 150 },
-            { id: 10, name: "طاجن فراخ بالخضار", category: "أكلات شعبية وطواجن", calories: 140, protein: 14.0, carbs: 8.0, fat: 5.0, micro: "فيتامينات متنوعة، ألياف", servingName: "طبق طاجن (250g)", servingGrams: 250 },
-            { id: 11, name: "مكرونة بشاميل", category: "أكلات شعبية وطواجن", calories: 210, protein: 9.0, carbs: 22.0, fat: 10.0, micro: "كالسيوم، بروتين، طاقة", servingName: "قطعة بشاميل (200g)", servingGrams: 200 },
-            { id: 12, name: "فول سوداني محمص", category: "مكسرات وبذور", calories: 567, protein: 25.8, carbs: 16.0, fat: 49.2, micro: "دهون صحية، نياشين، مغنيسيوم", servingName: "حفنة مكسرات (30g)", servingGrams: 30 },
-            { id: 13, name: "سمسم أبيض / محمص", category: "مكسرات وبذور", calories: 573, protein: 17.7, carbs: 23.4, fat: 49.7, micro: "غني جداً بالكالسيوم والنحاس", servingName: "ملعقة كبيرة (15g)", servingGrams: 15 },
-            { id: 14, name: "جبنة قريش", category: "ألبان وأجبان", calories: 98, protein: 11.0, carbs: 3.4, fat: 4.3, micro: "كازين بطيء الهضم، كالسيوم", servingName: "قطعة متوسطة (100g)", servingGrams: 100 },
-            { id: 15, name: "كشري مصري بالصلصة", category: "أكلات شعبية وطواجن", calories: 160, protein: 5.5, carbs: 30.0, fat: 2.2, micro: "ألياف، حديد نباتي", servingName: "طبق كشري (300g)", servingGrams: 300 },
-            { id: 16, name: "فول مدمس بالزيت", category: "أكلات شعبية وطواجن", calories: 110, protein: 7.5, carbs: 15.0, fat: 3.0, micro: "ألياف مرتفعة، حديد", servingName: "طبق فول (150g)", servingGrams: 150 },
-            { id: 17, name: "صدور دجاج مشوية", category: "بروتينات", calories: 165, protein: 31.0, carbs: 0.0, fat: 3.6, micro: "بروتين صافي، B3", servingName: "صدر دجاج (150g)", servingGrams: 150 },
-            { id: 18, name: "بيض مسلوق", category: "بروتينات", calories: 155, protein: 12.6, carbs: 1.1, fat: 10.6, micro: "كولين، فيتامين د", servingName: "بيضة واحدة (50g)", servingGrams: 50 },
-            { id: 19, name: "موز طازج", category: "نشويات", calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, micro: "بوتاسيوم، فيتامين B6", servingName: "موزة متوسطة (110g)", servingGrams: 110 }
+        // Over 100 Healthy Egyptian Foods & Common Diet Items Database
+        const FOOD_DATABASE = [
+            // --- بروتينات ولحوم (Proteins & Meats) ---
+            { id: 1, name: "صدور دجاج مشوية", category: "بروتينات ولحوم", calories: 165, protein: 31.0, carbs: 0.0, fat: 3.6, micro: "بروتين صافي، فيتامين B3", servingName: "صدر دجاج متوسط (150g)", servingGrams: 150 },
+            { id: 2, name: "كبدة بلدي مطهوة", category: "بروتينات ولحوم", calories: 175, protein: 26.0, carbs: 4.0, fat: 5.0, micro: "حديد، فيتامين B12، B6", servingName: "شريحة كبدة (90g)", servingGrams: 90 },
+            { id: 3, name: "سمك بلطي مشوي", category: "بروتينات ولحوم", calories: 128, protein: 26.0, carbs: 0.0, fat: 2.7, micro: "فوسفور، أوميجا 3", servingName: "سمكة بلطي متوسطة (200g)", servingGrams: 200 },
+            { id: 4, name: "سمك بوري مشوي", category: "بروتينات ولحوم", calories: 170, protein: 20.0, carbs: 0.0, fat: 10.0, micro: "أوميجا 3 مرتفع، فيتامين د", servingName: "سمكة بوري متوسطة (200g)", servingGrams: 200 },
+            { id: 5, name: "لحم بقر مشوي (كباب)", category: "بروتينات ولحوم", calories: 210, protein: 28.0, carbs: 0.0, fat: 11.0, micro: "زنك، حديد، بروتين ممتاز", servingName: "قطعة كباب (100g)", servingGrams: 100 },
+            { id: 6, name: "لحم مفروم شفيف الدهون", category: "بروتينات ولحوم", calories: 190, protein: 25.0, carbs: 0.0, fat: 10.0, micro: "حديد، كيراتين طبيعي", servingName: "حصة 100g", servingGrams: 100 },
+            { id: 7, name: "تونة مصفاة بالماء", category: "بروتينات ولحوم", calories: 116, protein: 26.0, carbs: 0.0, fat: 1.0, micro: "سيلينيوم، بروتين صافي", servingName: "علبة تونة مصفاة (140g)", servingGrams: 140 },
+            { id: 8, name: "تونة مصفاة بالزيت", category: "بروتينات ولحوم", calories: 180, protein: 24.0, carbs: 0.0, fat: 9.0, micro: "أوميجا 3، طاقة", servingName: "علبة تونة (140g)", servingGrams: 140 },
+            { id: 9, name: "جمبري مسلوق/مشوي", category: "بروتينات ولحوم", calories: 99, protein: 24.0, carbs: 0.2, fat: 0.3, micro: "يود، زنك، سعرات منخفضة جداً", servingName: "10 حبات جمبري (100g)", servingGrams: 100 },
+            { id: 10, name: "بيض مسلوق", category: "بروتينات ولحوم", calories: 155, protein: 12.6, carbs: 1.1, fat: 10.6, micro: "كولين، فيتامين د", servingName: "بيضة مسلوقة كبيرة (50g)", servingGrams: 50 },
+            { id: 11, name: "بيض أمليت بنقطة زيت", category: "بروتينات ولحوم", calories: 170, protein: 12.0, carbs: 1.2, fat: 13.0, micro: "كولين، بروتين", servingName: "بيضة (50g)", servingGrams: 50 },
+            { id: 12, name: "بياض بيض مسلوق", category: "بروتينات ولحوم", calories: 52, protein: 11.0, carbs: 0.7, fat: 0.2, micro: "بروتين صافي خالي دهون", servingName: "بياض 3 بيضات (100g)", servingGrams: 100 },
+            { id: 13, name: "كفتة مشوية", category: "بروتينات ولحوم", calories: 250, protein: 18.0, carbs: 3.0, fat: 18.0, micro: "بروتين، حديد", servingName: "صبع كفتة (50g)", servingGrams: 50 },
+            { id: 14, name: "أرانب مسلوقة", category: "بروتينات ولحوم", calories: 140, protein: 27.0, carbs: 0.0, fat: 3.5, micro: "سريعة الهضم، بروتين عالي", servingName: "قطعة أرنب (150g)", servingGrams: 150 },
+            { id: 15, name: "صدر ديك رومي (تيركي)", category: "بروتينات ولحوم", calories: 135, protein: 30.0, carbs: 0.0, fat: 1.5, micro: "بروتين صافي ممتاز", servingName: "شريحة تيركي (100g)", servingGrams: 100 },
+            { id: 16, name: "وراك دجاج بدون جلد", category: "بروتينات ولحوم", calories: 180, protein: 24.0, carbs: 0.0, fat: 9.0, micro: "حديد، زنك", servingName: "وورك دجاج (150g)", servingGrams: 150 },
+            { id: 17, name: "سمك سردين طازج مشوي", category: "بروتينات ولحوم", calories: 208, protein: 25.0, carbs: 0.0, fat: 11.0, micro: "كالسيوم، أوميجا 3 خيالي", servingName: "حصة 100g", servingGrams: 100 },
+            { id: 18, name: "سمك فيليه قشر بياض", category: "بروتينات ولحوم", calories: 95, protein: 20.0, carbs: 0.0, fat: 1.5, micro: "خفيف جداً على المعدة", servingName: "قطعة فيليه (150g)", servingGrams: 150 },
+
+            // --- نشويات وحبوب (Carbs & Grains) ---
+            { id: 19, name: "عيش بلدي مصري", category: "نشويات وحبوب", calories: 275, protein: 9.0, carbs: 55.0, fat: 1.2, micro: "ألياف الردة، فيتامين B1", servingName: "رغيف كامل (100g)", servingGrams: 100 },
+            { id: 20, name: "عيش سن / نخالة", category: "نشويات وحبوب", calories: 220, protein: 10.0, carbs: 44.0, fat: 1.5, micro: "ألياف عالية جداً للرجيم", servingName: "رغيف سن (80g)", servingGrams: 80 },
+            { id: 21, name: "شوفان خام", category: "نشويات وحبوب", calories: 389, protein: 16.9, carbs: 66.0, fat: 6.9, micro: "بيتا جلوكان، مشبع", servingName: "كوب شوفان (80g)", servingGrams: 80 },
+            { id: 22, name: "أرز أبيض مطهو", category: "نشويات وحبوب", calories: 130, protein: 2.7, carbs: 28.0, fat: 0.3, micro: "سهل الهضم وطاقة سريعة", servingName: "طبق أرز (150g)", servingGrams: 150 },
+            { id: 23, name: "أرز بني مطهو", category: "نشويات وحبوب", calories: 112, protein: 2.6, carbs: 23.5, fat: 0.9, micro: "ألياف ومغنيسيوم", servingName: "طبق أرز بني (150g)", servingGrams: 150 },
+            { id: 24, name: "مكرونة مطهوة", category: "نشويات وحبوب", calories: 131, protein: 5.0, carbs: 25.0, fat: 1.0, micro: "طاقة للتمارين", servingName: "طبق مكرونة (150g)", servingGrams: 150 },
+            { id: 25, name: "بطاطس مسلوقة", category: "نشويات وحبوب", calories: 87, protein: 2.0, carbs: 20.0, fat: 0.1, micro: "بوتاسيوم عالي، مشبعة", servingName: "حبة بطاطس متوسطة (150g)", servingGrams: 150 },
+            { id: 26, name: "بطاطا حلوة مشوية", category: "نشويات وحبوب", calories: 90, protein: 2.0, carbs: 21.0, fat: 0.1, micro: "فيتامين A، ألياف ممتاز", servingName: "ثمرة بطاطا متوسطة (150g)", servingGrams: 150 },
+            { id: 27, name: "فريك مطهو", category: "نشويات وحبوب", calories: 150, protein: 6.0, carbs: 28.0, fat: 1.5, micro: "مؤشر جلايسيمي منخفض", servingName: "طبق فريك (150g)", servingGrams: 150 },
+            { id: 28, name: "برغل مطهو", category: "نشويات وحبوب", calories: 83, protein: 3.1, carbs: 18.5, fat: 0.2, micro: "ألياف وسعرات قليلة", servingName: "طبق برغل (150g)", servingGrams: 150 },
+            { id: 29, name: "كشري مصري بالصلصة", category: "نشويات وحبوب", calories: 160, protein: 5.5, carbs: 30.0, fat: 2.2, micro: "بروتين نباتي كامل، ألياف", servingName: "طبق كشري (300g)", servingGrams: 300 },
+            { id: 30, name: "مكرونة بشاميل", category: "نشويات وحبوب", calories: 210, protein: 9.0, carbs: 22.0, fat: 10.0, micro: "طاقة، كالسيوم", servingName: "قطعة بشاميل (200g)", servingGrams: 200 },
+            { id: 31, name: "حواوشي مصري (عيش بلدي)", category: "نشويات وحبوب", calories: 280, protein: 14.0, carbs: 24.0, fat: 15.0, micro: "بروتين، طاقة", servingName: "نصف رغيف حواوشي (120g)", servingGrams: 120 },
+            { id: 32, name: "توسـت بني أسمر", category: "نشويات وحبوب", calories: 247, protein: 12.0, carbs: 41.0, fat: 3.5, micro: "ألياف الردة", servingName: "شريحة توست (30g)", servingGrams: 30 },
+            { id: 33, name: "ذرة حلوة مسلوقة", category: "نشويات وحبوب", calories: 96, protein: 3.4, carbs: 21.0, fat: 1.5, micro: "مضادات أكسدة، ألياف", servingName: "كوب ذرة (150g)", servingGrams: 150 },
+
+            // --- خضراوات وطازج (Vegetables & Greens) ---
+            { id: 34, name: "خيار طازج", category: "خضراوات وطازج", calories: 15, protein: 0.7, carbs: 3.6, fat: 0.1, micro: "ترطيب عالي، ترطيب وترميم", servingName: "خيارة متوسطة (100g)", servingGrams: 100 },
+            { id: 35, name: "طماطم طازجة", category: "خضراوات وطازج", calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, micro: "ليكوبين، فيتامين ج", servingName: "حبة طماطم (100g)", servingGrams: 100 },
+            { id: 36, name: "جرجير طازج", category: "خضراوات وطازج", calories: 25, protein: 2.6, carbs: 3.7, fat: 0.7, micro: "حديد، كالسيوم، شعر وبشرة", servingName: "حزمة جرجير (100g)", servingGrams: 100 },
+            { id: 37, name: "خس بلدي / كابوتشا", category: "خضراوات وطازج", calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2, micro: "حمض الفوليك، ترطيب", servingName: "كوب خس (100g)", servingGrams: 100 },
+            { id: 38, name: "سبانخ مطهوة", category: "خضراوات وطازج", calories: 40, protein: 3.0, carbs: 4.0, fat: 1.5, micro: "حديد، مغنيسيوم، فولات", servingName: "طبق سبانخ (150g)", servingGrams: 150 },
+            { id: 39, name: "ملوخية مصرية مطهوة", category: "خضراوات وطازج", calories: 45, protein: 2.5, carbs: 5.0, fat: 2.0, micro: "ألياف، فيتامين أ، هضم ممتاز", servingName: "طبق ملوخية (200g)", servingGrams: 200 },
+            { id: 40, name: "بروكلي مسلوق/عالبخار", category: "خضراوات وطازج", calories: 35, protein: 2.4, carbs: 7.2, fat: 0.4, micro: "مضادات أكسدة، فيتامين C", servingName: "كوب بروكلي (100g)", servingGrams: 100 },
+            { id: 41, name: "كوسة مطهوة بالصلصة", category: "خضراوات وطازج", calories: 30, protein: 1.2, carbs: 5.0, fat: 1.0, micro: "مفيدة للقلب والمعدة", servingName: "طبق كوسة (150g)", servingGrams: 150 },
+            { id: 42, name: "فلفل رومي / ألوان", category: "خضراوات وطازج", calories: 26, protein: 1.0, carbs: 6.0, fat: 0.3, micro: "فيتامين C مضاعف", servingName: "ثمرة فلفل (100g)", servingGrams: 100 },
+            { id: 43, name: "باذنجان مشوي (بابا غنوج)", category: "خضراوات وطازج", calories: 70, protein: 1.5, carbs: 6.0, fat: 4.0, micro: "مضادات أكسدة، حديد", servingName: "ملعقتين كبار (100g)", servingGrams: 100 },
+            { id: 44, name: "بامية مطهوة", category: "خضراوات وطازج", calories: 40, protein: 2.0, carbs: 7.0, fat: 1.0, micro: "ألياف لينة ومفيدة للهضم", servingName: "طبق بامية (150g)", servingGrams: 150 },
+            { id: 45, name: "جزر طازج", category: "خضراوات وطازج", calories: 41, protein: 0.9, carbs: 9.6, fat: 0.2, micro: "بيتا كاروتين، قوة النظر", servingName: "جزرة متوسطة (80g)", servingGrams: 80 },
+            { id: 46, name: "قرنبيط مسلوق/مشوي", category: "خضراوات وطازج", calories: 25, protein: 1.9, carbs: 5.0, fat: 0.3, micro: "مضادات التهاب، كولين", servingName: "حصة 100g", servingGrams: 100 },
+            { id: 47, name: "كرنب / ملفوف مسلوق", category: "خضراوات وطازج", calories: 23, protein: 1.3, carbs: 5.8, fat: 0.1, micro: "فيتامين K، مناعة", servingName: "كوب ملفوف (100g)", servingGrams: 100 },
+            { id: 48, name: "محشي كرنب / ورق عنب", category: "خضراوات وطازج", calories: 140, protein: 3.5, carbs: 22.0, fat: 4.5, micro: "ألياف وخضار مطهو", servingName: "5 أصابع محشي (120g)", servingGrams: 120 },
+            { id: 49, name: "بصل أخضر / أحمر", category: "خضراوات وطازج", calories: 32, protein: 1.8, carbs: 7.3, fat: 0.2, micro: "مضاد حيوي طبيعي", servingName: "حبة بصل (80g)", servingGrams: 80 },
+            { id: 50, name: "ثوم طازج", category: "خضراوات وطازج", calories: 149, protein: 6.4, carbs: 33.0, fat: 0.5, micro: "أليسين، تقوية المناعة", servingName: "فصين ثوم (10g)", servingGrams: 10 },
+            { id: 51, name: "فجل أحمر / أبيض", category: "خضراوات وطازج", calories: 16, protein: 0.7, carbs: 3.4, fat: 0.1, micro: "منشط للكبد والهضم", servingName: "3 حبات فجل (100g)", servingGrams: 100 },
+            { id: 52, name: "بقدونس وشبت وكزبرة", category: "خضراوات وطازج", calories: 36, protein: 3.0, carbs: 6.3, fat: 0.8, micro: "مطهر للمسالك، بوتاسيوم", servingName: "حزمة مشكلة (100g)", servingGrams: 100 },
+
+            // --- فواكه (Fruits) ---
+            { id: 53, name: "موز طازج", category: "فواكه", calories: 89, protein: 1.1, carbs: 22.8, fat: 0.3, micro: "بوتاسيوم، طاقة سريعة", servingName: "موزة متوسطة (110g)", servingGrams: 110 },
+            { id: 54, name: "تفاح طازج", category: "فواكه", calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2, micro: "بكتين، ألياف مشبعة", servingName: "تفاحة متوسطة (150g)", servingGrams: 150 },
+            { id: 55, name: "برتقال بلدي / بصرة", category: "فواكه", calories: 47, protein: 0.9, carbs: 11.8, fat: 0.1, micro: "فيتامين C عالي جداً", servingName: "برتقالة متوسطة (130g)", servingGrams: 130 },
+            { id: 56, name: "جوافة مصرية", category: "فواكه", calories: 68, protein: 2.6, carbs: 14.0, fat: 1.0, micro: "فيتامين C أعلى من البرتقال", servingName: "ثمرة جوافة (100g)", servingGrams: 100 },
+            { id: 57, name: "بلح / تمر مجفف", category: "فواكه", calories: 282, protein: 2.5, carbs: 75.0, fat: 0.4, micro: "حديد، طاقة فورية للتمرين", servingName: "3 تمرات (30g)", servingGrams: 30 },
+            { id: 58, name: "رمان طازج", category: "فواكه", calories: 83, protein: 1.7, carbs: 18.7, fat: 1.2, micro: "مضادات أكسدة للقلب", servingName: "نصف كوب رمان (100g)", servingGrams: 100 },
+            { id: 59, name: "فراولة طازجة", category: "فواكه", calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, micro: "سعرات قليلة جداً، فيتامين C", servingName: "كوب فراولة (150g)", servingGrams: 150 },
+            { id: 60, name: "بطيخ طازج", category: "فواكه", calories: 30, protein: 0.6, carbs: 7.5, fat: 0.2, micro: "سيترولين، ترطيب رائع", servingName: "شريحة بطيخ (200g)", servingGrams: 200 },
+            { id: 61, name: "كانتالوب / أناناس بلدي", category: "فواكه", calories: 34, protein: 0.8, carbs: 8.2, fat: 0.2, micro: "فيتامين A، ترطيب", servingName: "كوب قطع (150g)", servingGrams: 150 },
+            { id: 62, name: "مانجو طازجة", category: "فواكه", calories: 60, protein: 0.8, carbs: 15.0, fat: 0.4, micro: "فيتامين A، طعم لذيذ", servingName: "نصف حبة مانجو (120g)", servingGrams: 120 },
+            { id: 63, name: "خوخ / برقوق", category: "فواكه", calories: 39, protein: 0.9, carbs: 9.5, fat: 0.3, micro: "ألياف ملينة للمعدة", servingName: "حبة خوخ (100g)", servingGrams: 100 },
+            { id: 64, name: "عنب أحمر / أخضر", category: "فواكه", calories: 69, protein: 0.7, carbs: 18.0, fat: 0.2, micro: "ريسفيراترول مضاد أكسدة", servingName: "عنقود صغير (100g)", servingGrams: 100 },
+            { id: 65, name: "تين برشومي طازج", category: "فواكه", calories: 74, protein: 0.8, carbs: 19.0, fat: 0.3, micro: "كالسيوم وألياف عالية", servingName: "حبتين تين (80g)", servingGrams: 80 },
+
+            // --- ألبان وأجبان (Dairy & Cheese) ---
+            { id: 66, name: "جبنة قريش مصرية", category: "ألبان وأجبان", calories: 98, protein: 11.0, carbs: 3.4, fat: 4.3, micro: "كازين بطيء الهضم، كالسيوم", servingName: "قطعة متوسطة (100g)", servingGrams: 100 },
+            { id: 67, name: "زبادي بلدي طازج", category: "ألبان وأجبان", calories: 61, protein: 3.5, carbs: 4.7, fat: 3.3, micro: "بروبيوتيك للمعدة", servingName: "علبة زبادي (105g)", servingGrams: 105 },
+            { id: 68, name: "زبادي يوناني خالي الدسم", category: "ألبان وأجبان", calories: 59, protein: 10.0, carbs: 3.6, fat: 0.4, micro: "بروتين مضاعف، مشبع", servingName: "علبة زبادي يوناني (150g)", servingGrams: 150 },
+            { id: 69, name: "لبن (حليب) كامل الدسم", category: "ألبان وأجبان", calories: 60, protein: 3.2, carbs: 4.8, fat: 3.2, micro: "كالسيوم، فيتامين D", servingName: "كوب حليب (200ml)", servingGrams: 200 },
+            { id: 70, name: "لبن (حليب) خالي الدسم", category: "ألبان وأجبان", calories: 35, protein: 3.4, carbs: 5.0, fat: 0.1, micro: "كالسيوم بدون دهون", servingName: "كوب حليب (200ml)", servingGrams: 200 },
+            { id: 71, name: "جبنة بيضاء قليل الملح", category: "ألبان وأجبان", calories: 170, protein: 11.0, carbs: 2.0, fat: 13.0, micro: "كالسيوم وبروتين", servingName: "خرطة جبنة (50g)", servingGrams: 50 },
+            { id: 72, name: "جبنة شيدر / رومي", category: "ألبان وأجبان", calories: 380, protein: 23.0, carbs: 1.5, fat: 31.0, micro: "كالسيوم مكثف", servingName: "شريحة جبنة (30g)", servingGrams: 30 },
+            { id: 73, name: "لبن رايب طبيعي", category: "ألبان وأجبان", calories: 52, protein: 3.3, carbs: 4.7, fat: 2.2, micro: "مريح للمعدة والقولون", servingName: "كوب رايب (200ml)", servingGrams: 200 },
+
+            // --- بقوليات ومكسرات (Legumes & Nuts) ---
+            { id: 74, name: "فول مدمس بالزيت الخفيف", category: "بقوليات ومكسرات", calories: 110, protein: 7.5, carbs: 15.0, fat: 3.0, micro: "ألياف مشبعة جداً، حديد", servingName: "طبق فول (150g)", servingGrams: 150 },
+            { id: 75, name: "طعمية / فلافل مصرية", category: "بقوليات ومكسرات", calories: 290, protein: 13.0, carbs: 32.0, fat: 14.0, micro: "بروتين نباتي وطاقة", servingName: "قرص طعمية (30g)", servingGrams: 30 },
+            { id: 76, name: "عدس أصفر شوربة", category: "بقوليات ومكسرات", calories: 95, protein: 6.5, carbs: 14.0, fat: 1.8, micro: "حديد، حمض الفوليك، دفء", servingName: "طبق شوربة (200g)", servingGrams: 200 },
+            { id: 77, name: "عدس بجبة (أسود) مطهو", category: "بقوليات ومكسرات", calories: 116, protein: 9.0, carbs: 20.0, fat: 0.4, micro: "ألياف وحديد عالي", servingName: "كوب مطهو (150g)", servingGrams: 150 },
+            { id: 78, name: "حمص الشام مسلوق", category: "بقوليات ومكسرات", calories: 164, protein: 8.8, carbs: 27.0, fat: 2.6, micro: "بروتين نباتي، ألياف", servingName: "كوب حمص (150g)", servingGrams: 150 },
+            { id: 79, name: "فاصوليا بيضاء مطهوة", category: "بقوليات ومكسرات", calories: 120, protein: 8.0, carbs: 21.0, fat: 0.5, micro: "خفض الكوليسترول، ألياف", servingName: "طبق فاصوليا (150g)", servingGrams: 150 },
+            { id: 80, name: "لوبيا أم عين سوداء", category: "بقوليات ومكسرات", calories: 130, protein: 8.5, carbs: 22.0, fat: 0.6, micro: "زنك وفولات", servingName: "طبق لوبيا (150g)", servingGrams: 150 },
+            { id: 81, name: "فول سوداني محمص", category: "بقوليات ومكسرات", calories: 567, protein: 25.8, carbs: 16.0, fat: 49.2, micro: "دهون صحية، نياشين", servingName: "حفنة سوداني (30g)", servingGrams: 30 },
+            { id: 82, name: "سمسم أبيض / محمص", category: "بقوليات ومكسرات", calories: 573, protein: 17.7, carbs: 23.4, fat: 49.7, micro: "كالسيوم خيالي ونحاس", servingName: "ملعقة كبيرة (15g)", servingGrams: 15 },
+            { id: 83, name: "لوز ني / محمص", category: "بقوليات ومكسرات", calories: 579, protein: 21.0, carbs: 21.0, fat: 49.0, micro: "فيتامين E، مغنيسيوم", servingName: "حفنة لوز (20 حبة ~30g)", servingGrams: 30 },
+            { id: 84, name: "عين جمل (جوز)", category: "بقوليات ومكسرات", calories: 654, protein: 15.0, carbs: 13.7, fat: 65.0, micro: "أوميجا 3 للذاكرة والمخ", servingName: "5 حبات (30g)", servingGrams: 30 },
+            { id: 85, name: "كاجو ني / محمص", category: "بقوليات ومكسرات", calories: 553, protein: 18.0, carbs: 30.0, fat: 44.0, micro: "زنك، مغنيسيوم", servingName: "حفنة كاجو (30g)", servingGrams: 30 },
+            { id: 86, name: "بذور الشيا", category: "بقوليات ومكسرات", calories: 486, protein: 16.5, carbs: 42.0, fat: 30.7, micro: "ألياف هائلة، أوميجا 3", servingName: "ملعقة كبيرة (15g)", servingGrams: 15 },
+            { id: 87, name: "بذور الكتان", category: "بقوليات ومكسرات", calories: 534, protein: 18.0, carbs: 29.0, fat: 42.0, micro: "ليجنان، صحة الهرمونات", servingName: "ملعقة كبيرة (15g)", servingGrams: 15 },
+            { id: 88, name: "لب خشب / عباد الشمس", category: "بقوليات ومكسرات", calories: 584, protein: 20.0, carbs: 20.0, fat: 51.0, micro: "فيتامين E، تسلية صحية", servingName: "حفنة لب (30g)", servingGrams: 30 },
+            { id: 89, name: "لب أبيض (قرع العسل)", category: "بقوليات ومكسرات", calories: 559, protein: 30.0, carbs: 10.7, fat: 49.0, micro: "زنك عالي جداً للمناعة", servingName: "حفنة لب أبيض (30g)", servingGrams: 30 },
+            { id: 90, name: "زبدة فول سوداني طبيعية", category: "بقوليات ومكسرات", calories: 588, protein: 25.0, carbs: 20.0, fat: 50.0, micro: "طاقة للرياضيين", servingName: "ملعقة كبيرة (30g)", servingGrams: 30 },
+
+            // --- أطباق إضافية ومشروبات (Extra Egyptian Dishes) ---
+            { id: 91, name: "طاجن خضار مشكل باللحم", category: "خضراوات وطازج", calories: 130, protein: 10.0, carbs: 8.0, fat: 6.0, micro: "فيتامينات شمولية", servingName: "طبق طاجن (200g)", servingGrams: 200 },
+            { id: 92, name: "شوربة خضار طازجة", category: "خضراوات وطازج", calories: 40, protein: 1.5, carbs: 8.0, fat: 0.5, micro: "خفيفة ومغذية", servingName: "طبق شوربة (200g)", servingGrams: 200 },
+            { id: 93, name: "مسقعة باذنجان خفيفة", category: "خضراوات وطازج", calories: 110, protein: 3.0, carbs: 10.0, fat: 7.0, micro: "ألياف وطعم مصري اصيل", servingName: "طبق مسقعة (150g)", servingGrams: 150 },
+            { id: 94, name: "طحينة بيضاء خام", category: "بقوليات ومكسرات", calories: 595, protein: 17.0, carbs: 21.0, fat: 53.0, micro: "دهون سمسم صحية", servingName: "ملعقة كبيرة (15g)", servingGrams: 15 },
+            { id: 95, name: "زيت زيتون بكر", category: "بقوليات ومكسرات", calories: 884, protein: 0.0, carbs: 0.0, fat: 100.0, micro: "دهون غير مشبعة للقلب", servingName: "ملعقة طعام (10g)", servingGrams: 10 },
+            { id: 96, name: "عسل نحل طبيعي", category: "فواكه", calories: 304, protein: 0.3, carbs: 82.0, fat: 0.0, micro: "شفاء ومناعة وطاقة", servingName: "ملعقة صغيرة (10g)", servingGrams: 10 },
+            { id: 97, name: "مربى دايت / خفيفة", category: "فواكه", calories: 150, protein: 0.5, carbs: 37.0, fat: 0.1, micro: "طعم حلو بسعرات أقل", servingName: "ملعقة (20g)", servingGrams: 20 },
+            { id: 98, name: "شاي أحمر / أخضر بدون سكر", category: "خضراوات وطازج", calories: 2, protein: 0.0, carbs: 0.2, fat: 0.0, micro: "مضادات أكسدة", servingName: "كوب شاي (200ml)", servingGrams: 200 },
+            { id: 99, name: "قهوة / اسبريسو بدون سكر", category: "خضراوات وطازج", calories: 5, protein: 0.3, carbs: 0.5, fat: 0.1, micro: "كافيين، تركيز وحرق", servingName: "فنجان قهوة", servingGrams: 100 },
+            { id: 100, name: "مياه غازية دايت (صفر سعرات)", category: "نشويات وحبوب", calories: 0, protein: 0.0, carbs: 0.0, fat: 0.0, micro: "انتعاش بدون سعرات", servingName: "كان (330ml)", servingGrams: 330 }
         ];
 
-        // State
-        let dailyGoals = { calories: 2000, protein: 130, carbs: 220, fat: 60 };
-        let loggedMeals = [];
-        let currentlySelectedFood = null;
-        let selectedCategoryFilter = 'all';
+        // IndexedDB Manager for Permanent Storage per User
+        const DB_NAME = 'SehatiPlannerDB';
+        const DB_VERSION = 1;
+        let db = null;
 
-        window.onload = function() {
-            loadSavedData();
-            updateCurrentDate();
-            renderQuickChips();
+        let currentUser = null; // { username, fullName, goals, todayMeals, schedule }
+        let selectedCategory = 'all';
+        let currentSelectedFoodItem = null;
+        let selectedPlannerDayKey = 'sat';
 
-            const hasSetGoals = localStorage.getItem('hasConfiguredGoals');
-            if (hasSetGoals) {
-                showDashboardScreen();
-            } else {
-                showSetupScreen();
+        // Initialize IndexedDB
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = (e) => reject('فشل فتح قاعدة البيانات');
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (e) => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains('users')) {
+                        database.createObjectStore('users', { keyPath: 'username' });
+                    }
+                };
+            });
+        }
+
+        function getUserFromDB(username) {
+            return new Promise((resolve) => {
+                if (!db) return resolve(null);
+                const tx = db.transaction('users', 'readonly');
+                const store = tx.objectStore('users');
+                const req = store.get(username.toLowerCase());
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        function saveUserToDB(userData) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('قاعدة البيانات غير متصلة');
+                const tx = db.transaction('users', 'readwrite');
+                const store = tx.objectStore('users');
+                const req = store.put(userData);
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => reject('فشل الحفظ في قاعدة البيانات');
+            });
+        }
+
+        window.onload = async function() {
+            try {
+                await initDB();
+                updateTopDateString();
+
+                // Check active session
+                const activeUsername = localStorage.getItem('activeAppUser');
+                if (activeUsername) {
+                    const userData = await getUserFromDB(activeUsername);
+                    if (userData) {
+                        currentUser = userData;
+                        showAppDashboard();
+                    } else {
+                        showAuthSection();
+                    }
+                } else {
+                    showAuthSection();
+                }
+            } catch (err) {
+                console.error(err);
+                showAuthSection();
             }
         };
 
-        function updateCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'gregorian' };
-            document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('ar-EG', options);
+        function updateTopDateString() {
+            const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'gregorian' };
+            document.getElementById('topDateStr').innerText = new Date().toLocaleDateString('ar-EG', opts);
         }
 
-        function showSetupScreen() {
-            document.getElementById('setupView').classList.remove('hidden');
-            document.getElementById('dashboardView').classList.add('hidden');
-            document.getElementById('navActions').classList.add('hidden');
+        // --- AUTHENTICATION SYSTEM LOGIC ---
+        let currentAuthMode = 'login';
 
-            document.getElementById('setupCalories').value = dailyGoals.calories;
-            document.getElementById('setupProtein').value = dailyGoals.protein;
-            document.getElementById('setupCarbs').value = dailyGoals.carbs;
-            document.getElementById('setupFat').value = dailyGoals.fat;
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const btnLogin = document.getElementById('tabAuthLogin');
+            const btnReg = document.getElementById('tabAuthRegister');
+            const nameGroup = document.getElementById('nameFieldGroup');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const title = document.getElementById('authTitle');
+
+            if (mode === 'login') {
+                btnLogin.className = "py-2.5 rounded-xl transition text-emerald-400 bg-slate-800 border border-slate-700";
+                btnReg.className = "py-2.5 rounded-xl transition text-slate-400 hover:text-white";
+                nameGroup.classList.add('hidden');
+                submitBtn.querySelector('span').innerText = "دخول لحسابي";
+                title.innerText = "تسجيل الدخول لحسابك";
+            } else {
+                btnReg.className = "py-2.5 rounded-xl transition text-emerald-400 bg-slate-800 border border-slate-700";
+                btnLogin.className = "py-2.5 rounded-xl transition text-slate-400 hover:text-white";
+                nameGroup.classList.remove('hidden');
+                submitBtn.querySelector('span').innerText = "إنشاء الحساب الآن";
+                title.innerText = "إنشاء حساب جديد دائم";
+            }
         }
 
-        function showDashboardScreen() {
-            document.getElementById('setupView').classList.add('hidden');
-            document.getElementById('dashboardView').classList.remove('hidden');
-            document.getElementById('navActions').classList.remove('hidden');
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value.trim().toLowerCase();
+            const password = document.getElementById('authPassword').value;
+            const fullName = document.getElementById('authFullName').value.trim() || username;
 
-            updateDashboard();
-            renderMealsList();
-        }
-
-        function startTracking() {
-            const cal = parseInt(document.getElementById('setupCalories').value) || 2000;
-            const prot = parseInt(document.getElementById('setupProtein').value) || 130;
-            const carbs = parseInt(document.getElementById('setupCarbs').value) || 220;
-            const fat = parseInt(document.getElementById('setupFat').value) || 60;
-
-            dailyGoals = { calories: cal, protein: prot, carbs: carbs, fat: fat };
-            localStorage.setItem('hasConfiguredGoals', 'true');
-            saveData();
-
-            showDashboardScreen();
-            showToast('تم حفظ أهدافك اليومية وبدء التتبع!');
-        }
-
-        function toggleSmartCalc() {
-            const form = document.getElementById('smartCalcForm');
-            const chevron = document.getElementById('calcChevron');
-            form.classList.toggle('hidden');
-            chevron.classList.toggle('rotate-180');
-        }
-
-        function calculateSmartGoals() {
-            const w = parseFloat(document.getElementById('calcWeight').value);
-            const h = parseFloat(document.getElementById('calcHeight').value);
-            const a = parseFloat(document.getElementById('calcAge').value);
-            const gender = document.getElementById('calcGender').value;
-            const goal = document.getElementById('calcGoal').value;
-
-            if (!w || !h || !a) {
-                showToast('يرجى إدخال الوزن والطول والعمر لحساب الاحتياج');
+            if (!username || !password) {
+                showToast('يرجى ملء جميع الحقول المطلوبة');
                 return;
             }
 
-            let bmr = (10 * w) + (6.25 * h) - (5 * a);
-            bmr += (gender === 'male') ? 5 : -161;
+            try {
+                const existingUser = await getUserFromDB(username);
 
-            let tdee = bmr * 1.375;
-            if (goal === 'cut') tdee *= 0.8;
-            else if (goal === 'bulk') tdee *= 1.15;
-
-            const targetCals = Math.round(tdee);
-            const targetProt = Math.round(w * 1.8);
-            const targetFat = Math.round((targetCals * 0.25) / 9);
-            const targetCarbs = Math.round((targetCals - (targetProt * 4) - (targetFat * 9)) / 4);
-
-            document.getElementById('setupCalories').value = targetCals;
-            document.getElementById('setupProtein').value = targetProt;
-            document.getElementById('setupCarbs').value = targetCarbs;
-            document.getElementById('setupFat').value = targetFat;
-
-            showToast('تمت إضافة المقترحات بنجاح بناءً على مدخلاتك!');
+                if (currentAuthMode === 'register') {
+                    if (existingUser) {
+                        showToast('اسم المستخدم هذا مسجل بالفعل! حاول تسجيل الدخول');
+                        return;
+                    }
+                    // Create new user object
+                    const newUser = {
+                        username: username,
+                        password: password, // In client-side IndexedDB
+                        fullName: fullName,
+                        goals: { calories: 2000, protein: 130, carbs: 220, fat: 60 },
+                        todayMeals: [],
+                        schedule: {
+                            sat: { meals: '', workout: '', study: '' },
+                            sun: { meals: '', workout: '', study: '' },
+                            mon: { meals: '', workout: '', study: '' },
+                            tue: { meals: '', workout: '', study: '' },
+                            wed: { meals: '', workout: '', study: '' },
+                            thu: { meals: '', workout: '', study: '' },
+                            fri: { meals: '', workout: '', study: '' }
+                        }
+                    };
+                    await saveUserToDB(newUser);
+                    currentUser = newUser;
+                    localStorage.setItem('activeAppUser', username);
+                    showToast('تم إنشاء حسابك وحفظه بنجاح!');
+                    showAppDashboard();
+                } else {
+                    // Login
+                    if (!existingUser || existingUser.password !== password) {
+                        showToast('اسم المستخدم أو كلمة المرور غير صحيحة');
+                        return;
+                    }
+                    currentUser = existingUser;
+                    localStorage.setItem('activeAppUser', username);
+                    showToast(`أهلاً بك مجدداً ${currentUser.fullName}!`);
+                    showAppDashboard();
+                }
+            } catch (err) {
+                showToast('حدث خطأ أثناء الاتصال بقاعدة البيانات');
+            }
         }
 
-        function filterCategory(cat) {
-            selectedCategoryFilter = cat;
-            
-            // Update button styles
-            const btns = document.querySelectorAll('.cat-btn');
-            btns.forEach(btn => {
-                btn.className = "cat-btn border border-slate-700 bg-slate-800 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-semibold hover:text-white";
-            });
-            event.target.className = "cat-btn active border border-emerald-500 bg-emerald-500/20 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-semibold";
-
-            handleSearch(document.getElementById('foodSearch').value);
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('activeAppUser');
+            showAuthSection();
+            showToast('تم تسجيل الخروج');
         }
 
-        function handleSearch(query) {
-            const resultsBox = document.getElementById('searchResults');
-            const cleanQuery = query.trim().toLowerCase();
+        function showAuthSection() {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('mainAppContent').classList.add('hidden');
+            document.getElementById('userLoggedInView').classList.add('hidden');
+        }
 
-            let matches = foodDatabase;
+        function showAppDashboard() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainAppContent').classList.remove('hidden');
+            document.getElementById('userLoggedInView').classList.remove('hidden');
 
-            if (selectedCategoryFilter !== 'all') {
-                matches = matches.filter(f => f.category === selectedCategoryFilter);
+            document.getElementById('currentUserName').innerText = currentUser.fullName || currentUser.username;
+
+            // Load & render current user data
+            refreshTrackerUI();
+            loadPlannerDayData(selectedPlannerDayKey);
+            fillSettingsInputs();
+        }
+
+        async function syncUserChanges() {
+            if (currentUser) {
+                await saveUserToDB(currentUser);
+            }
+        }
+
+        function switchMainTab(tab) {
+            document.getElementById('secTracker').classList.add('hidden');
+            document.getElementById('secPlanner').classList.add('hidden');
+            document.getElementById('secSettings').classList.add('hidden');
+
+            document.getElementById('btnTabTracker').className = "tab-btn border border-slate-700 text-slate-400 hover:text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+            document.getElementById('btnTabPlanner').className = "tab-btn border border-slate-700 text-slate-400 hover:text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+            document.getElementById('btnTabSettings').className = "tab-btn border border-slate-700 text-slate-400 hover:text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+
+            if (tab === 'tracker') {
+                document.getElementById('secTracker').classList.remove('hidden');
+                document.getElementById('btnTabTracker').className = "tab-btn active border border-emerald-500/30 text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+            } else if (tab === 'planner') {
+                document.getElementById('secPlanner').classList.remove('hidden');
+                document.getElementById('btnTabPlanner').className = "tab-btn active border border-emerald-500/30 text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+            } else if (tab === 'settings') {
+                document.getElementById('secSettings').classList.remove('hidden');
+                document.getElementById('btnTabSettings').className = "tab-btn active border border-emerald-500/30 text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2";
+            }
+        }
+
+        function setCategoryFilter(cat) {
+            selectedCategory = cat;
+            const pills = document.querySelectorAll('.cat-pill');
+            pills.forEach(p => p.className = "cat-pill border border-slate-700 bg-slate-900 text-slate-400 text-[11px] px-2.5 py-1 rounded-full font-bold hover:text-white");
+            event.target.className = "cat-pill active border border-emerald-500 bg-emerald-500/20 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold";
+
+            filterFoods(document.getElementById('foodSearchInput').value);
+        }
+
+        function filterFoods(query) {
+            const dropdown = document.getElementById('foodDropdown');
+            const clean = query.trim().toLowerCase();
+
+            let matches = FOOD_DATABASE;
+
+            if (selectedCategory !== 'all') {
+                matches = matches.filter(f => f.category === selectedCategory);
             }
 
-            if (cleanQuery) {
-                matches = matches.filter(food => 
-                    food.name.toLowerCase().includes(cleanQuery) || 
-                    food.category.toLowerCase().includes(cleanQuery)
-                );
+            if (clean) {
+                matches = matches.filter(f => f.name.toLowerCase().includes(clean) || f.category.toLowerCase().includes(clean));
             }
 
             if (matches.length === 0) {
-                resultsBox.innerHTML = `<div class="p-3 text-xs text-slate-500 text-center">لا توجد نتائج مطابقة</div>`;
+                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-500 text-center">لا توجد أكلات مطابقة</div>`;
             } else {
-                resultsBox.innerHTML = matches.map(food => `
-                    <div onclick="selectFoodFromDb(${food.id})" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 flex justify-between items-center transition">
+                dropdown.innerHTML = matches.slice(0, 20).map(f => `
+                    <div onclick="selectFoodItem(${f.id})" class="p-3 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition">
                         <div>
-                            <div class="text-xs font-bold text-white">${food.name}</div>
-                            <div class="text-[10px] text-slate-400">${food.category}</div>
+                            <div class="text-xs font-bold text-white">${f.name}</div>
+                            <div class="text-[10px] text-slate-400">${f.category}</div>
                         </div>
-                        <div class="text-xs font-bold text-emerald-400">${food.calories} kcal <span class="text-[10px] text-slate-500">/100g</span></div>
+                        <div class="text-xs font-bold text-emerald-400">${f.calories} kcal <span class="text-[10px] text-slate-500">/100g</span></div>
                     </div>
                 `).join('');
             }
 
-            resultsBox.classList.remove('hidden');
+            dropdown.classList.remove('hidden');
         }
 
-        function selectFoodFromDb(id) {
-            currentlySelectedFood = foodDatabase.find(f => f.id === id);
-            document.getElementById('searchResults').classList.add('hidden');
-            document.getElementById('foodSearch').value = currentlySelectedFood.name;
+        function selectFoodItem(id) {
+            currentSelectedFoodItem = FOOD_DATABASE.find(f => f.id === id);
+            document.getElementById('foodDropdown').classList.add('hidden');
+            document.getElementById('foodSearchInput').value = currentSelectedFoodItem.name;
 
-            document.getElementById('selectedFoodName').innerText = currentlySelectedFood.name;
-            document.getElementById('selectedFoodCategory').innerText = currentlySelectedFood.category;
-            
-            // Unit portion setup
-            const unitOpt = document.getElementById('unitServingOpt');
-            if (currentlySelectedFood.servingName) {
-                unitOpt.innerText = `${currentlySelectedFood.servingName} (${currentlySelectedFood.servingGrams}g)`;
-                unitOpt.classList.remove('hidden');
+            document.getElementById('prevFoodName').innerText = currentSelectedFoodItem.name;
+            document.getElementById('prevFoodCategory').innerText = currentSelectedFoodItem.category;
+
+            const optServing = document.getElementById('optServingUnit');
+            if (currentSelectedFoodItem.servingName) {
+                optServing.innerText = `${currentSelectedFoodItem.servingName} (${currentSelectedFoodItem.servingGrams}g)`;
+                optServing.classList.remove('hidden');
             } else {
-                unitOpt.classList.add('hidden');
+                optServing.classList.add('hidden');
             }
 
-            document.getElementById('portionUnit').value = 'grams';
-            document.getElementById('foodGrams').value = 100;
+            document.getElementById('portionUnitSelect').value = 'grams';
+            document.getElementById('portionAmountInput').value = 100;
 
-            updateSelectedPreview();
-            document.getElementById('selectedFoodBox').classList.remove('hidden');
+            recalcSelectedPreview();
+            document.getElementById('selectedFoodPreview').classList.remove('hidden');
         }
 
-        function handleUnitChange() {
-            const unit = document.getElementById('portionUnit').value;
-            const inputGrams = document.getElementById('foodGrams');
+        function onPortionUnitChange() {
+            const unit = document.getElementById('portionUnitSelect').value;
+            const inputAmount = document.getElementById('portionAmountInput');
 
-            if (unit === 'serving' && currentlySelectedFood && currentlySelectedFood.servingGrams) {
-                inputGrams.value = currentlySelectedFood.servingGrams;
+            if (unit === 'serving' && currentSelectedFoodItem && currentSelectedFoodItem.servingGrams) {
+                inputAmount.value = currentSelectedFoodItem.servingGrams;
             } else {
-                inputGrams.value = 100;
+                inputAmount.value = 100;
             }
-            updateSelectedPreview();
+            recalcSelectedPreview();
         }
 
-        function updateSelectedPreview() {
-            if (!currentlySelectedFood) return;
-            const grams = parseFloat(document.getElementById('foodGrams').value) || 100;
+        function recalcSelectedPreview() {
+            if (!currentSelectedFoodItem) return;
+            const grams = parseFloat(document.getElementById('portionAmountInput').value) || 100;
             const factor = grams / 100;
 
-            document.getElementById('selectedFoodBaseCal').innerText = `${Math.round(currentlySelectedFood.calories * factor)} سعرة / ${grams}g`;
-            document.getElementById('selectedFoodProtein').innerText = (currentlySelectedFood.protein * factor).toFixed(1);
-            document.getElementById('selectedFoodCarbs').innerText = (currentlySelectedFood.carbs * factor).toFixed(1);
-            document.getElementById('selectedFoodFat').innerText = (currentlySelectedFood.fat * factor).toFixed(1);
-            document.getElementById('selectedFoodMicro').innerText = currentlySelectedFood.micro || '-';
+            document.getElementById('prevFoodCalBadge').innerText = `${Math.round(currentSelectedFoodItem.calories * factor)} kcal / ${grams}g`;
+            document.getElementById('prevFoodProt').innerText = (currentSelectedFoodItem.protein * factor).toFixed(1);
+            document.getElementById('prevFoodCarb').innerText = (currentSelectedFoodItem.carbs * factor).toFixed(1);
+            document.getElementById('prevFoodFat').innerText = (currentSelectedFoodItem.fat * factor).toFixed(1);
+            document.getElementById('prevFoodMicro').innerText = currentSelectedFoodItem.micro || '-';
         }
 
-        function addSelectedFoodToLog() {
-            if (!currentlySelectedFood) return;
-            const grams = parseFloat(document.getElementById('foodGrams').value) || 100;
+        async function confirmAddFoodToLog() {
+            if (!currentSelectedFoodItem || !currentUser) return;
+            const grams = parseFloat(document.getElementById('portionAmountInput').value) || 100;
             const factor = grams / 100;
 
-            loggedMeals.push({
+            const newMeal = {
                 id: Date.now(),
-                name: currentlySelectedFood.name,
+                name: currentSelectedFoodItem.name,
                 grams: grams,
-                calories: Math.round(currentlySelectedFood.calories * factor),
-                protein: parseFloat((currentlySelectedFood.protein * factor).toFixed(1)),
-                carbs: parseFloat((currentlySelectedFood.carbs * factor).toFixed(1)),
-                fat: parseFloat((currentlySelectedFood.fat * factor).toFixed(1)),
-                micro: currentlySelectedFood.micro
-            });
+                calories: Math.round(currentSelectedFoodItem.calories * factor),
+                protein: parseFloat((currentSelectedFoodItem.protein * factor).toFixed(1)),
+                carbs: parseFloat((currentSelectedFoodItem.carbs * factor).toFixed(1)),
+                fat: parseFloat((currentSelectedFoodItem.fat * factor).toFixed(1))
+            };
 
-            saveData();
-            updateDashboard();
-            renderMealsList();
+            currentUser.todayMeals.push(newMeal);
+            await syncUserChanges();
+            refreshTrackerUI();
 
-            document.getElementById('selectedFoodBox').classList.add('hidden');
-            document.getElementById('foodSearch').value = '';
-            currentlySelectedFood = null;
-            showToast('تمت إضافة الوجبة لمذكرة اليوم!');
+            document.getElementById('selectedFoodPreview').classList.add('hidden');
+            document.getElementById('foodSearchInput').value = '';
+            currentSelectedFoodItem = null;
+            showToast('تمت إضافة الوجبة لمذكرتك اليومية!');
         }
 
-        function toggleCustomFoodForm() {
-            document.getElementById('customFoodForm').classList.toggle('hidden');
+        function toggleCustomFoodAccordion() {
+            document.getElementById('customFoodAccordion').classList.toggle('hidden');
         }
 
-        function addCustomFoodToLog() {
-            const name = document.getElementById('customName').value.trim();
-            const grams = parseFloat(document.getElementById('customGrams').value) || 100;
-            const calories = parseFloat(document.getElementById('customCalories').value) || 0;
-            const protein = parseFloat(document.getElementById('customProtein').value) || 0;
-            const carbs = parseFloat(document.getElementById('customCarbs').value) || 0;
-            const fat = parseFloat(document.getElementById('customFat').value) || 0;
-            const micro = document.getElementById('customMicro').value.trim() || 'وجبة مخصصة';
+        async function addCustomMealLog() {
+            const name = document.getElementById('custFoodName').value.trim();
+            const grams = parseFloat(document.getElementById('custFoodGrams').value) || 100;
+            const cal = parseFloat(document.getElementById('custFoodCal').value) || 0;
+            const prot = parseFloat(document.getElementById('custFoodProt').value) || 0;
+            const carb = parseFloat(document.getElementById('custFoodCarb').value) || 0;
+            const fat = parseFloat(document.getElementById('custFoodFat').value) || 0;
 
-            if (!name || calories <= 0) {
-                showToast('يرجى كتابة اسم الوجبة والسعرات بشكل صحيح');
+            if (!name || cal <= 0) {
+                showToast('ادخل اسم السعرات للوجبة المخصصة بشكل صحيح');
                 return;
             }
 
-            loggedMeals.push({
+            const newMeal = {
                 id: Date.now(),
                 name: name,
                 grams: grams,
-                calories: Math.round(calories),
-                protein: protein,
-                carbs: carbs,
-                fat: fat,
-                micro: micro
-            });
+                calories: Math.round(cal),
+                protein: prot,
+                carbs: carb,
+                fat: fat
+            };
 
-            saveData();
-            updateDashboard();
-            renderMealsList();
+            currentUser.todayMeals.push(newMeal);
+            await syncUserChanges();
+            refreshTrackerUI();
 
-            document.getElementById('customName').value = '';
-            document.getElementById('customCalories').value = '';
-            document.getElementById('customProtein').value = '';
-            document.getElementById('customCarbs').value = '';
-            document.getElementById('customFat').value = '';
-            toggleCustomFoodForm();
+            document.getElementById('custFoodName').value = '';
+            document.getElementById('custFoodCal').value = '';
+            toggleCustomFoodAccordion();
             showToast('تمت إضافة الوجبة المخصصة!');
         }
 
-        function renderQuickChips() {
-            const chipsBox = document.getElementById('quickAddChips');
-            // Showing requested key items
-            const quickIds = [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14];
-            chipsBox.innerHTML = quickIds.map(id => {
-                const food = foodDatabase.find(f => f.id === id);
-                if (!food) return '';
-                return `
-                    <button onclick="selectFoodFromDb(${food.id})" class="bg-slate-800 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-emerald-400 text-xs px-2.5 py-1.5 rounded-full transition flex items-center gap-1">
-                        <i class="fa-solid fa-plus text-[10px] text-emerald-400"></i> ${food.name}
-                    </button>
-                `;
-            }).join('');
-        }
+        function refreshTrackerUI() {
+            if (!currentUser) return;
 
-        function updateDashboard() {
-            let totalCal = 0, totalProt = 0, totalCarb = 0, totalFat = 0;
+            const goals = currentUser.goals || { calories: 2000, protein: 130, carbs: 220, fat: 60 };
+            const meals = currentUser.todayMeals || [];
 
-            loggedMeals.forEach(m => {
-                totalCal += m.calories;
-                totalProt += m.protein;
-                totalCarb += m.carbs;
-                totalFat += m.fat;
+            let totCal = 0, totProt = 0, totCarb = 0, totFat = 0;
+            meals.forEach(m => {
+                totCal += m.calories;
+                totProt += m.protein;
+                totCarb += m.carbs;
+                totFat += m.fat;
             });
 
-            totalCal = Math.round(totalCal);
-            totalProt = Math.round(totalProt);
-            totalCarb = Math.round(totalCarb);
-            totalFat = Math.round(totalFat);
+            totCal = Math.round(totCal);
+            totProt = Math.round(totProt);
+            totCarb = Math.round(totCarb);
+            totFat = Math.round(totFat);
 
-            document.getElementById('calorieTargetText').innerText = totalCal;
-            document.getElementById('goalCalorieVal').innerText = dailyGoals.calories;
-            
-            document.getElementById('totalProteinVal').innerText = totalProt;
-            document.getElementById('targetProteinVal').innerText = dailyGoals.protein;
+            // Set numbers
+            document.getElementById('dashTotalCal').innerText = totCal;
+            document.getElementById('dashGoalCal').innerText = goals.calories;
 
-            document.getElementById('totalCarbsVal').innerText = totalCarb;
-            document.getElementById('targetCarbsVal').innerText = dailyGoals.carbs;
+            document.getElementById('dashTotalProt').innerText = totProt;
+            document.getElementById('dashGoalProt').innerText = goals.protein;
 
-            document.getElementById('totalFatVal').innerText = totalFat;
-            document.getElementById('targetFatVal').innerText = dailyGoals.fat;
+            document.getElementById('dashTotalCarb').innerText = totCarb;
+            document.getElementById('dashGoalCarb').innerText = goals.carbs;
 
-            const calPercent = Math.min(Math.round((totalCal / dailyGoals.calories) * 100), 100);
-            document.getElementById('calorieProgressBar').style.width = calPercent + '%';
-            document.getElementById('caloriePercentText').innerText = calPercent + '%';
+            document.getElementById('dashTotalFat').innerText = totFat;
+            document.getElementById('dashGoalFat').innerText = goals.fat;
 
-            const remaining = dailyGoals.calories - totalCal;
-            if (remaining >= 0) {
-                document.getElementById('calorieRemainingText').innerText = `المتبقي: ${remaining} سعرة`;
-                document.getElementById('calorieRemainingText').className = "text-slate-400 font-semibold";
+            // Main Bar Progress
+            const calPct = Math.min(Math.round((totCal / goals.calories) * 100), 100);
+            document.getElementById('dashCalBar').style.width = calPct + '%';
+            document.getElementById('dashCalPctText').innerText = calPct + '%';
+
+            const rem = goals.calories - totCal;
+            if (rem >= 0) {
+                document.getElementById('dashCalRemText').innerText = `المتبقي: ${rem} سعرة`;
+                document.getElementById('dashCalRemText').className = "text-slate-400 font-bold";
             } else {
-                document.getElementById('calorieRemainingText').innerText = `تجاوزت الهدف بـ ${Math.abs(remaining)} سعرة`;
-                document.getElementById('calorieRemainingText').className = "text-rose-400 font-bold";
+                document.getElementById('dashCalRemText').innerText = `تجاوزت الهدف بـ ${Math.abs(rem)} سعرة`;
+                document.getElementById('dashCalRemText').className = "text-rose-400 font-bold";
             }
 
-            document.getElementById('proteinBar').style.width = Math.min((totalProt / dailyGoals.protein) * 100, 100) + '%';
-            document.getElementById('carbsBar').style.width = Math.min((totalCarb / dailyGoals.carbs) * 100, 100) + '%';
-            document.getElementById('fatBar').style.width = Math.min((totalFat / dailyGoals.fat) * 100, 100) + '%';
+            // Macro Progress Bars
+            document.getElementById('dashBarProt').style.width = Math.min((totProt / goals.protein) * 100, 100) + '%';
+            document.getElementById('dashBarCarb').style.width = Math.min((totCarb / goals.carbs) * 100, 100) + '%';
+            document.getElementById('dashBarFat').style.width = Math.min((totFat / goals.fat) * 100, 100) + '%';
+
+            // Meals List Render
+            renderLoggedMealsList(meals);
         }
 
-        function renderMealsList() {
-            const container = document.getElementById('loggedMealsList');
-            const emptyState = document.getElementById('emptyMealState');
-            const countBadge = document.getElementById('mealCount');
-            const microBox = document.getElementById('microSummaryBox');
-            const microTags = document.getElementById('microTags');
+        function renderLoggedMealsList(meals) {
+            const container = document.getElementById('loggedMealsContainer');
+            const emptyPlaceholder = document.getElementById('emptyMealPlaceholder');
+            const countBadge = document.getElementById('loggedMealCount');
 
-            countBadge.innerText = loggedMeals.length;
+            countBadge.innerText = meals.length;
 
-            if (loggedMeals.length === 0) {
-                emptyState.classList.remove('hidden');
+            if (meals.length === 0) {
+                emptyPlaceholder.classList.remove('hidden');
                 container.innerHTML = '';
-                microBox.classList.add('hidden');
                 return;
             }
 
-            emptyState.classList.add('hidden');
-            let microSet = new Set();
+            emptyPlaceholder.classList.add('hidden');
 
-            container.innerHTML = loggedMeals.map(meal => {
-                if (meal.micro) microSet.add(meal.micro);
-
-                return `
-                    <div class="bg-slate-800/60 hover:bg-slate-800 p-3.5 rounded-xl border border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0 border border-emerald-500/20">
-                                <i class="fa-solid fa-utensils"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-sm">${meal.name}</h4>
-                                <p class="text-xs text-slate-400">${meal.grams} جرام • <span class="text-emerald-400 font-semibold">${meal.calories} kcal</span></p>
-                            </div>
+            container.innerHTML = meals.map(meal => `
+                <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0 border border-emerald-500/20">
+                            <i class="fa-solid fa-utensils"></i>
                         </div>
-
-                        <div class="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-0 pt-2 sm:pt-0 border-slate-700/50">
-                            <div class="text-[11px] text-slate-300 flex gap-2">
-                                <span class="bg-blue-950/60 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded">ب: ${meal.protein}g</span>
-                                <span class="bg-amber-950/60 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded">ك: ${meal.carbs}g</span>
-                                <span class="bg-rose-950/60 text-rose-300 border border-rose-500/20 px-2 py-0.5 rounded">د: ${meal.fat}g</span>
-                            </div>
-                            <button onclick="removeMeal(${meal.id})" class="text-slate-500 hover:text-rose-400 p-1 transition" title="حذف الوجبة">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
-                            </button>
+                        <div>
+                            <h4 class="font-bold text-white text-xs">${meal.name}</h4>
+                            <p class="text-[10px] text-slate-400">${meal.grams}g • <span class="text-emerald-400 font-bold">${meal.calories} kcal</span></p>
                         </div>
                     </div>
-                `;
-            }).join('');
 
-            if (microSet.size > 0) {
-                microTags.innerHTML = Array.from(microSet).map(m => `
-                    <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2.5 py-1 rounded-full font-semibold">${m}</span>
-                `).join('');
-                microBox.classList.remove('hidden');
-            } else {
-                microBox.classList.add('hidden');
-            }
+                    <div class="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-0 pt-2 sm:pt-0 border-slate-800">
+                        <div class="text-[10px] text-slate-300 flex gap-1.5">
+                            <span class="bg-blue-950/60 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded-lg">ب: ${meal.protein}g</span>
+                            <span class="bg-amber-950/60 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded-lg">ك: ${meal.carbs}g</span>
+                            <span class="bg-rose-950/60 text-rose-300 border border-rose-500/20 px-2 py-0.5 rounded-lg">د: ${meal.fat}g</span>
+                        </div>
+                        <button onclick="deleteLoggedMeal(${meal.id})" class="text-slate-500 hover:text-rose-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function removeMeal(id) {
-            loggedMeals = loggedMeals.filter(m => m.id !== id);
-            saveData();
-            updateDashboard();
-            renderMealsList();
+        async function deleteLoggedMeal(id) {
+            if (!currentUser) return;
+            currentUser.todayMeals = currentUser.todayMeals.filter(m => m.id !== id);
+            await syncUserChanges();
+            refreshTrackerUI();
             showToast('تم حذف الوجبة');
         }
 
-        function resetDailyLog() {
-            if (loggedMeals.length === 0) return;
-            loggedMeals = [];
-            saveData();
-            updateDashboard();
-            renderMealsList();
-            showToast('تمت إعادة ضبط الوجبات اليومية');
+        async function clearTodayMeals() {
+            if (!currentUser || currentUser.todayMeals.length === 0) return;
+            currentUser.todayMeals = [];
+            await syncUserChanges();
+            refreshTrackerUI();
+            showToast('تم إفراغ قائمة وجبات اليوم');
         }
 
-        function saveData() {
-            localStorage.setItem('dailyNutritionLog', JSON.stringify(loggedMeals));
-            localStorage.setItem('dailyNutritionGoals', JSON.stringify(dailyGoals));
+        function selectPlannerDay(dayKey) {
+            selectedPlannerDayKey = dayKey;
+            const dayBtns = document.querySelectorAll('.day-tab');
+            dayBtns.forEach(b => b.className = "day-tab py-2.5 rounded-xl transition text-slate-400 hover:text-white");
+
+            const activeBtn = document.getElementById(`dayBtn${dayKey.charAt(0).toUpperCase() + dayKey.slice(1)}`);
+            if (activeBtn) activeBtn.className = "day-tab active py-2.5 rounded-xl transition";
+
+            loadPlannerDayData(dayKey);
         }
 
-        function loadSavedData() {
-            const savedMeals = localStorage.getItem('dailyNutritionLog');
-            const savedGoals = localStorage.getItem('dailyNutritionGoals');
+        function loadPlannerDayData(dayKey) {
+            if (!currentUser || !currentUser.schedule) return;
+            const dayObj = currentUser.schedule[dayKey] || { meals: '', workout: '', study: '' };
 
-            if (savedMeals) {
-                try { loggedMeals = JSON.parse(savedMeals); } catch(e) { loggedMeals = []; }
-            }
-            if (savedGoals) {
-                try { dailyGoals = JSON.parse(savedGoals); } catch(e) {}
-            }
+            document.getElementById('planMealsText').value = dayObj.meals || '';
+            document.getElementById('planWorkoutText').value = dayObj.workout || '';
+            document.getElementById('planStudyText').value = dayObj.study || '';
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').innerText = message;
+        async function saveCurrentDaySchedule() {
+            if (!currentUser) return;
+            if (!currentUser.schedule) currentUser.schedule = {};
+
+            currentUser.schedule[selectedPlannerDayKey] = {
+                meals: document.getElementById('planMealsText').value,
+                workout: document.getElementById('planWorkoutText').value,
+                study: document.getElementById('planStudyText').value
+            };
+
+            await syncUserChanges();
+            showToast('تم حفظ جدول اليوم بملفك بنجاح!');
+        }
+
+        function fillSettingsInputs() {
+            if (!currentUser || !currentUser.goals) return;
+            document.getElementById('settingCalGoal').value = currentUser.goals.calories || 2000;
+            document.getElementById('settingProtGoal').value = currentUser.goals.protein || 130;
+            document.getElementById('settingCarbGoal').value = currentUser.goals.carbs || 220;
+            document.getElementById('settingFatGoal').value = currentUser.goals.fat || 60;
+        }
+
+        async function saveGoalsSettings() {
+            if (!currentUser) return;
+
+            const c = parseInt(document.getElementById('settingCalGoal').value) || 2000;
+            const p = parseInt(document.getElementById('settingProtGoal').value) || 130;
+            const cb = parseInt(document.getElementById('settingCarbGoal').value) || 220;
+            const f = parseInt(document.getElementById('settingFatGoal').value) || 60;
+
+            currentUser.goals = { calories: c, protein: p, carbs: cb, fat: f };
+            await syncUserChanges();
+            refreshTrackerUI();
+            showToast('تم إعداد وتعديل الأهداف بنجاح!');
+        }
+
+        // --- Helper Toast ---
+        function showToast(msg) {
+            const toast = document.getElementById('appToast');
+            document.getElementById('toastMsg').innerText = msg;
             toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
     </script>
 </body>
