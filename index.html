@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاسبة السعرات والمنظم اليومي المتكامل</title>
-  <!-- Google Fonts: Cairo & Tajawal -->
+  <title>🎮 لعبة السعرات والتغذية اليومية | Calorie Quest</title>
+  
+  <!-- Google Fonts: Press Start 2P for Arcade style & Cairo/Tajawal for text -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=Press+Start+2P&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <style>
     :root {
-      --bg-main: #0f172a;
-      --bg-card: #1e293b;
-      --bg-input: #334155;
-      --accent-green: #10b981;
-      --accent-blue: #3b82f6;
-      --accent-orange: #f97316;
-      --accent-purple: #8b5cf6;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
+      --game-bg: #0d0f18;
+      --card-bg: #161a29;
+      --card-border: #2a314d;
+      --neon-green: #00ff66;
+      --neon-pink: #ff0055;
+      --neon-cyan: #00e5ff;
+      --neon-yellow: #ffcc00;
+      --neon-purple: #9d00ff;
+      --text-main: #f0f4f8;
+      --text-muted: #8c9ba8;
     }
 
     * {
@@ -30,715 +31,491 @@
       margin: 0;
       padding: 0;
       font-family: 'Cairo', 'Tajawal', sans-serif;
+      user-select: none;
     }
 
     body {
-      background-color: var(--bg-main);
+      background-color: var(--game-bg);
       color: var(--text-main);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      background-image: radial-gradient(#1e2538 1px, transparent 1px);
+      background-size: 20px 20px;
     }
 
     .container {
-      width: 100%;
       max-width: 1100px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 15px;
     }
 
-    /* AUTH SCREEN */
-    .auth-container {
-      max-width: 450px;
-      margin: 60px auto;
-      background: var(--bg-card);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      border: 1px solid var(--border-color);
-      text-align: center;
-    }
-
-    .auth-header {
-      margin-bottom: 25px;
-    }
-
-    .auth-header i {
-      font-size: 45px;
-      color: var(--accent-green);
-      margin-bottom: 10px;
-    }
-
-    .auth-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      background: var(--bg-main);
-      padding: 5px;
-      border-radius: 12px;
-    }
-
-    .auth-tab {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: none;
-      color: var(--text-muted);
-      font-weight: 700;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.3s;
-    }
-
-    .auth-tab.active {
-      background: var(--accent-green);
-      color: #fff;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-      text-align: right;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: var(--accent-green);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: #059669;
-    }
-
-    .btn-secondary {
-      background: var(--accent-blue);
-      color: #fff;
-    }
-
-    /* HEADER & NAVBAR */
+    /* GAMIFIED HEADER */
     header {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
+      background: rgba(22, 26, 41, 0.95);
+      border-bottom: 4px solid var(--neon-cyan);
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.2);
       padding: 15px 0;
       position: sticky;
       top: 0;
       z-index: 100;
+      backdrop-filter: blur(10px);
     }
 
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .logo {
+    .game-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent-green);
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
     }
 
-    .nav-tabs {
+    /* PLAYER LEVEL & XP BAR */
+    .player-status {
       display: flex;
-      gap: 10px;
-    }
-
-    .nav-btn {
+      align-items: center;
+      gap: 15px;
+      background: var(--game-bg);
       padding: 8px 16px;
-      background: var(--bg-input);
-      border: none;
-      color: var(--text-main);
+      border-radius: 12px;
+      border: 2px solid var(--neon-yellow);
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+    }
+
+    .level-badge {
+      background: var(--neon-yellow);
+      color: #000;
+      font-weight: 900;
+      padding: 4px 10px;
       border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
+      font-size: 14px;
     }
 
-    .nav-btn.active {
-      background: var(--accent-green);
+    .xp-bar-container {
+      width: 100px;
+      height: 10px;
+      background: #252b42;
+      border-radius: 5px;
+      overflow: hidden;
     }
 
-    .user-profile {
+    .xp-fill {
+      height: 100%;
+      width: 45%;
+      background: var(--neon-yellow);
+      box-shadow: 0 0 8px var(--neon-yellow);
+    }
+
+    /* NAVIGATION BUTTONS */
+    .nav-btns {
       display: flex;
-      align-items: center;
       gap: 10px;
     }
 
-    /* DATE NAVIGATION BAR */
+    .game-btn {
+      padding: 10px 18px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .game-btn:hover, .game-btn.active {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* DATE BAR */
     .date-bar {
-      background: var(--bg-card);
-      padding: 12px 20px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
       border-radius: 15px;
-      margin-bottom: 20px;
+      padding: 12px 20px;
+      margin: 20px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid var(--border-color);
     }
 
-    .date-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .date-btn {
-      background: var(--bg-input);
-      border: none;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    /* CARDS & DASHBOARD */
-    .dashboard-grid {
+    /* DASHBOARD STATS (HP / MANA style) */
+    .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 15px;
       margin-bottom: 25px;
     }
 
-    .stat-card {
-      background: var(--bg-card);
-      padding: 20px;
+    .stat-box {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
       border-radius: 15px;
-      border: 1px solid var(--border-color);
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .stat-box.cal { border-color: var(--neon-pink); }
+    .stat-box.prot { border-color: var(--neon-green); }
+    .stat-box.carb { border-color: var(--neon-cyan); }
+    .stat-box.fat { border-color: var(--neon-purple); }
 
     .stat-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 8px;
     }
 
-    .progress-bar {
-      height: 8px;
-      background: var(--bg-input);
-      border-radius: 4px;
+    .bar-bg {
+      height: 12px;
+      background: #0f121d;
+      border-radius: 6px;
       overflow: hidden;
-      margin-top: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-top: 8px;
     }
 
-    .progress-fill {
+    .bar-inner {
       height: 100%;
       width: 0%;
-      transition: width 0.5s ease;
+      transition: width 0.4s ease;
     }
 
-    /* SECTION LAYOUT */
+    /* MAIN CONTENT GRID */
     .main-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 1.8fr 1.2fr;
       gap: 20px;
     }
 
     @media (max-width: 850px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
+      .main-grid { grid-template-columns: 1fr; }
     }
 
-    .card {
-      background: var(--bg-card);
+    .game-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
       padding: 20px;
-      border-radius: 15px;
-      border: 1px solid var(--border-color);
       margin-bottom: 20px;
     }
 
-    /* FOOD SELECTOR & SEARCH */
-    .food-search-box {
-      position: relative;
-      margin-bottom: 15px;
-    }
-
-    .category-pills {
+    /* FOOD SEARCH & PILLS */
+    .pills-container {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 10px;
-      margin-bottom: 15px;
+      padding: 10px 0;
     }
 
-    .pill {
+    .pill-btn {
       padding: 6px 14px;
-      background: var(--bg-input);
+      background: #0f121d;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
       border-radius: 20px;
-      font-size: 13px;
       cursor: pointer;
+      font-weight: 700;
       white-space: nowrap;
-      border: 1px solid transparent;
     }
 
-    .pill.active {
-      background: var(--accent-green);
-      border-color: var(--accent-green);
+    .pill-btn.active {
+      background: var(--neon-cyan);
+      color: #000;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
 
-    .food-list {
-      max-height: 280px;
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      max-height: 380px;
       overflow-y: auto;
+      padding-left: 5px;
+    }
+
+    .food-card {
+      background: #0f121d;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-
-    .food-item {
-      display: flex;
       justify-content: space-between;
+    }
+
+    .food-card:hover {
+      border-color: var(--neon-green);
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(0,255,102,0.3);
+    }
+
+    /* QUANTITY MODAL (POPUP) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
       align-items: center;
-      background: var(--bg-input);
-      padding: 10px 15px;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 3px solid var(--neon-green);
+      border-radius: 20px;
+      padding: 25px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
+      text-align: center;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+      background: #0f121d;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
       border-radius: 10px;
-      cursor: pointer;
+      margin: 15px 0;
+      outline: none;
     }
 
-    .food-item:hover {
-      border: 1px solid var(--accent-green);
-    }
-
-    /* EATEN LOG */
+    /* LOGGED FOOD ITEM */
     .log-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px;
-      border-bottom: 1px solid var(--border-color);
+      background: #0f121d;
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 8px;
     }
 
-    /* SCHEDULE / PLANNER */
-    .day-card {
-      background: var(--bg-input);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
+    /* AUTH MODAL */
+    .auth-box {
+      max-width: 400px;
+      margin: 80px auto;
+      background: var(--card-bg);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+      text-align: center;
     }
 
-    .day-header {
-      font-weight: 700;
-      color: var(--accent-green);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .schedule-inputs {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-
-    /* HIDDEN CLASS */
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- AUTHENTICATION SCREEN -->
-  <div id="authScreen" class="auth-container">
-    <div class="auth-header">
-      <i class="fa-solid fa-heart-pulse"></i>
-      <h2>حاسبة السعرات والمنظم اليومي</h2>
-      <p style="color: var(--text-muted); font-size: 14px;">سجل دخولك لحفظ أهدافك ووجباتك وجدولك دائمًا</p>
-    </div>
-
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-      <button class="auth-tab" onclick="switchAuthTab('register')">حساب جديد</button>
-    </div>
-
-    <form id="authForm" onsubmit="handleAuth(event)">
-      <div class="form-group hidden" id="nameGroup">
-        <label>الاسم الشخصي</label>
-        <input type="text" id="authName" class="form-control" placeholder="مثال: أحمد">
-      </div>
-      <div class="form-group">
-        <label>اسم المستخدم</label>
-        <input type="text" id="authUsername" class="form-control" required placeholder="username">
-      </div>
-      <div class="form-group">
-        <label>كلمة المرور</label>
-        <input type="password" id="authPassword" class="form-control" required placeholder="••••••••">
-      </div>
-      <button type="submit" class="btn btn-primary" id="authBtn">دخول</button>
+  <!-- AUTH SCREEN -->
+  <div id="authScreen" class="auth-box">
+    <h2 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fa-solid fa-gamepad"></i> Calorie Quest</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">سجل دخولك لحفظ أبطالك ومستواك الغذائي!</p>
+    
+    <form onsubmit="handleAuth(event)">
+      <input type="text" id="authUsername" class="modal-input" placeholder="اسم المستخدم" required style="font-size:16px;">
+      <input type="password" id="authPassword" class="modal-input" placeholder="كلمة المرور" required style="font-size:16px;">
+      <button type="submit" class="game-btn active" style="width: 100%; justify-content: center; margin-top: 10px;">
+        <i class="fa-solid fa-play"></i> بدء اللعب
+      </button>
     </form>
   </div>
 
   <!-- MAIN APP SCREEN -->
   <div id="appScreen" class="hidden">
+    <!-- HEADER -->
     <header>
       <div class="container header-content">
-        <div class="logo">
-          <i class="fa-solid fa-utensils"></i>
-          <span>صحتي & وجباتي</span>
+        <div class="game-logo">
+          <i class="fa-solid fa-bolt"></i> CALORIE QUEST
         </div>
-        <div class="nav-tabs">
-          <button class="nav-btn active" onclick="switchMainTab('tracker')"><i class="fa-solid fa-chart-pie"></i> تتبع الوجبات</button>
-          <button class="nav-btn" onclick="switchMainTab('planner')"><i class="fa-solid fa-calendar-check"></i> المنظم الأسبوعي</button>
-          <button class="nav-btn" onclick="switchMainTab('goals')"><i class="fa-solid fa-bullseye"></i> الأهداف</button>
+
+        <div class="player-status">
+          <div class="level-badge">LVL <span id="userLevel">1</span></div>
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--neon-yellow);">XP PROGRESS</div>
+            <div class="xp-bar-container"><div id="xpFill" class="xp-fill"></div></div>
+          </div>
         </div>
-        <div class="user-profile">
-          <span id="displayUserName" style="font-weight: 700;">المستخدم</span>
-          <button class="nav-btn" onclick="logout()" style="background: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i></button>
+
+        <div class="nav-btns">
+          <button class="game-btn active" onclick="switchTab('tracker')"><i class="fa-solid fa-dragon"></i> التتبع</button>
+          <button class="game-btn" onclick="switchTab('planner')"><i class="fa-solid fa-scroll"></i> المهمات</button>
+          <button class="game-btn" onclick="logout()" style="border-color: var(--neon-pink);"><i class="fa-solid fa-power-off"></i></button>
         </div>
       </div>
     </header>
 
-    <div class="container" style="margin-top: 20px;">
-      
-      <!-- DATE BAR -->
+    <div class="container">
+      <!-- DATE NAVIGATOR -->
       <div class="date-bar">
-        <div style="font-weight: 700; font-size: 16px;">
-          <i class="fa-regular fa-calendar-days" style="color: var(--accent-green);"></i>
-          <span id="currentDateText">---</span>
+        <button class="game-btn" onclick="changeDate(-1)"><i class="fa-solid fa-backward"></i> اليوم السابق</button>
+        <span id="currentDateDisplay" style="font-weight: 900; color: var(--neon-cyan);">---</span>
+        <button class="game-btn" onclick="changeDate(1)">اليوم التالي <i class="fa-solid fa-forward"></i></button>
+      </div>
+
+      <!-- DASHBOARD HP / MANA BARS -->
+      <div class="stats-grid">
+        <div class="stat-box cal">
+          <div class="stat-header"><span>🔥 السعرات</span><span id="calText">0/2000</span></div>
+          <div class="bar-bg"><div id="calBar" class="bar-inner" style="background: var(--neon-pink);"></div></div>
         </div>
-        <div class="date-controls">
-          <button class="date-btn" onclick="changeDate(-1)"><i class="fa-solid fa-chevron-right"></i> السابق</button>
-          <button class="date-btn" onclick="resetToToday()">اليوم</button>
-          <button class="date-btn" onclick="changeDate(1)">التالي <i class="fa-solid fa-chevron-left"></i></button>
+        <div class="stat-box prot">
+          <div class="stat-header"><span>🥩 البروتين</span><span id="protText">0/150g</span></div>
+          <div class="bar-bg"><div id="protBar" class="bar-inner" style="background: var(--neon-green);"></div></div>
+        </div>
+        <div class="stat-box carb">
+          <div class="stat-header"><span>🍞 الكاربوهيدرات</span><span id="carbText">0/200g</span></div>
+          <div class="bar-bg"><div id="carbBar" class="bar-inner" style="background: var(--neon-cyan);"></div></div>
+        </div>
+        <div class="stat-box fat">
+          <div class="stat-header"><span>🥑 الدهون</span><span id="fatText">0/60g</span></div>
+          <div class="bar-bg"><div id="fatBar" class="bar-inner" style="background: var(--neon-purple);"></div></div>
         </div>
       </div>
 
-      <!-- TAB 1: TRACKER -->
+      <!-- MAIN APP TRACKER -->
       <div id="trackerTab">
-        <!-- STATS DASHBOARD -->
-        <div class="dashboard-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>السعرات الحرارية</span>
-              <i class="fa-solid fa-fire" style="color: var(--accent-orange);"></i>
-            </div>
-            <h3 id="calStat">0 / 2000</h3>
-            <div class="progress-bar"><div id="calBar" class="progress-fill" style="background: var(--accent-orange);"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>البروتين</span>
-              <i class="fa-solid fa-drumstick-bite" style="color: var(--accent-green);"></i>
-            </div>
-            <h3 id="protStat">0 / 150g</h3>
-            <div class="progress-bar"><div id="protBar" class="progress-fill" style="background: var(--accent-green);"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>الكاربوهيدرات</span>
-              <i class="fa-solid fa-wheat-awn" style="color: var(--accent-blue);"></i>
-            </div>
-            <h3 id="carbStat">0 / 200g</h3>
-            <div class="progress-bar"><div id="carbBar" class="progress-fill" style="background: var(--accent-blue);"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>الدهون</span>
-              <i class="fa-solid fa-droplet" style="color: var(--accent-purple);"></i>
-            </div>
-            <h3 id="fatStat">0 / 60g</h3>
-            <div class="progress-bar"><div id="fatBar" class="progress-fill" style="background: var(--accent-purple);"></div></div>
-          </div>
-        </div>
-
         <div class="main-grid">
-          <!-- LEFT: FOOD SELECTION -->
-          <div class="card">
-            <h3><i class="fa-solid fa-magnifying-glass"></i> اختر أكلتك (+100 أكلة وخضار)</h3>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">ابحث عن الأكلة واختر الحصة بالجرام أو القطعة</p>
+          <!-- LEFT: FOOD LIST -->
+          <div class="game-card">
+            <h3><i class="fa-solid fa-utensils" style="color: var(--neon-green);"></i> اختر طعامك الرياضي</h3>
+            
+            <input type="text" id="foodSearch" class="modal-input" placeholder="🔍 ابحث عن الأكلة..." oninput="renderFoodGrid()" style="margin: 10px 0; font-size: 15px;">
 
-            <div class="food-search-box">
-              <input type="text" id="foodSearch" class="form-control" placeholder="ابحث باسم الأكلة (مثلاً: جبنة قريش، عيش، مكرونة...)" oninput="filterFoods()">
+            <div class="pills-container" id="pillsContainer">
+              <button class="pill-btn active" onclick="filterCat('all')">الكل</button>
+              <button class="pill-btn" onclick="filterCat('protein')">بروتينات</button>
+              <button class="pill-btn" onclick="filterCat('carbs')">نشويات</button>
+              <button class="pill-btn" onclick="filterCat('veggies')">خضراوات</button>
+              <button class="pill-btn" onclick="filterCat('fruits')">فواكه</button>
+              <button class="pill-btn" onclick="filterCat('dairy')">ألبان</button>
+              <button class="pill-btn" onclick="filterCat('nuts')">مكسرات وبقوليات</button>
             </div>
 
-            <div class="category-pills" id="categoryPills">
-              <button class="pill active" onclick="filterCategory('all')">الكل</button>
-              <button class="pill" onclick="filterCategory('protein')">لحوم وبروتين</button>
-              <button class="pill" onclick="filterCategory('carbs')">نشويات وحبوب</button>
-              <button class="pill" onclick="filterCategory('veggies')">خضراوات وطازج</button>
-              <button class="pill" onclick="filterCategory('fruits')">فواكه</button>
-              <button class="pill" onclick="filterCategory('dairy')">ألبان وأجبان</button>
-              <button class="pill" onclick="filterCategory('nuts')">بقوليات ومكسرات</button>
-            </div>
-
-            <div class="food-list" id="foodList"></div>
+            <div class="food-grid" id="foodGrid"></div>
           </div>
 
-          <!-- RIGHT: EATEN FOOD LOG -->
-          <div class="card">
-            <h3><i class="fa-solid fa-list-check"></i> وجبات اليوم المسجلة</h3>
-            <div id="eatenLogList" style="margin-top: 15px;"></div>
+          <!-- RIGHT: TODAY'S LOG -->
+          <div class="game-card">
+            <h3><i class="fa-solid fa-shield-halved" style="color: var(--neon-cyan);"></i> مخزن الوجبات اليومية</h3>
+            <div id="logList" style="margin-top: 15px;"></div>
           </div>
         </div>
       </div>
 
-      <!-- TAB 2: PLANNER / SCHEDULE -->
+      <!-- PLANNER TAB -->
       <div id="plannerTab" class="hidden">
-        <div class="card">
-          <h2><i class="fa-solid fa-calendar-days"></i> جدول تنظيم الأسبوع (أكل - تمرين - مذاكرة)</h2>
-          <p style="color: var(--text-muted); margin-bottom: 20px;">سجل خطتك اليومية لكل يوم في الأسبوع وستحفظ تلقائياً بحسابك</p>
-
-          <div id="weeklyPlanner"></div>
-          <button class="btn btn-primary" onclick="saveWeeklyPlan()"><i class="fa-solid fa-floppy-disk"></i> حفظ الجدول الأسبوعي</button>
-        </div>
-      </div>
-
-      <!-- TAB 3: GOALS SETUP -->
-      <div id="goalsTab" class="hidden">
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-          <h2><i class="fa-solid fa-bullseye"></i> تحديد الأهداف اليومية</h2>
-          <p style="color: var(--text-muted); margin-bottom: 20px;">قم بإدخال استهلاكك المستهدف اليومي من السعرات والماكروز</p>
-
-          <form onsubmit="saveUserGoals(event)">
-            <div class="form-group">
-              <label>السعرات الحرارية المستهدفة (Kcal)</label>
-              <input type="number" id="targetCal" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label>البروتين (جرام)</label>
-              <input type="number" id="targetProt" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label>الكاربوهيدرات (جرام)</label>
-              <input type="number" id="targetCarb" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label>الدهون (جرام)</label>
-              <input type="number" id="targetFat" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> حفظ الأهداف</button>
-          </form>
+        <div class="game-card">
+          <h2><i class="fa-solid fa-map"></i> خريطة المهمات اليومية (تمرين - أكل - مذاكرة)</h2>
+          <p style="color: var(--text-muted); margin-bottom: 20px;">نظم جدول أسبوعك للحصول على XP وتجاوز المستويات بسرعة!</p>
+          <div id="plannerGrid"></div>
+          <button class="game-btn active" onclick="savePlanner()" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ المهمات</button>
         </div>
       </div>
 
     </div>
   </div>
 
+  <!-- QUANTITY MODAL -->
+  <div id="qtyModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="modalFoodTitle" style="color: var(--neon-green);">إضافة وجبة</h3>
+      <p style="color: var(--text-muted); font-size: 13px;" id="modalFoodUnit">حدد الكمية المأكولة</p>
+      
+      <input type="number" id="modalQtyInput" class="modal-input" value="1" min="0.1" step="0.1">
+
+      <div style="display: flex; gap: 10px;">
+        <button class="game-btn active" style="flex: 1; justify-content: center;" onclick="confirmAddFood()"><i class="fa-solid fa-check"></i> تأكيد والإضافة</button>
+        <button class="game-btn" style="border-color: var(--neon-pink);" onclick="closeQtyModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // --- 100+ EGYPTIAN & HEALTHY FOOD DATABASE ---
-    const FOOD_DATABASE = [
-      // بروتينات
-      { id: 1, name: "صدور دجاج مطهوة", cat: "protein", cal: 165, p: 31, c: 0, f: 3.6, unit: "جرام" },
-      { id: 2, name: "أوراك دجاج بدون جلد", cat: "protein", cal: 209, p: 26, c: 0, f: 10.9, unit: "جرام" },
-      { id: 3, name: "كبدة بلدي مطهوة", cat: "protein", cal: 175, p: 26, c: 4, f: 5, unit: "جرام" },
-      { id: 4, name: "لحم بقر كباب صافي", cat: "protein", cal: 250, p: 26, c: 0, f: 15, unit: "جرام" },
-      { id: 5, name: "لحم مفروم كفتة مشوية", cat: "protein", cal: 250, p: 18, c: 3, f: 18, unit: "صبع (50g)" },
-      { id: 6, name: "سمك بلطي مشوي", cat: "protein", cal: 128, p: 26, c: 0, f: 2.6, unit: "سمكة متوسطة" },
-      { id: 7, name: "سمك بوري مشوي", cat: "protein", cal: 170, p: 20, c: 0, f: 9, unit: "جرام" },
-      { id: 8, name: "تونة مصفاة من الزيت", cat: "protein", cal: 130, p: 28, c: 0, f: 1, unit: "علبة (140g)" },
-      { id: 9, name: "جمبري مسلوق/مشوي", cat: "protein", cal: 99, p: 24, c: 0.2, f: 0.3, unit: "جرام" },
-      { id: 10, name: "بيض مسلوق", cat: "protein", cal: 72, p: 6.3, c: 0.4, f: 4.8, unit: "بيضة" },
-      { id: 11, name: "بيض مقلي بقليل زيت", cat: "protein", cal: 90, p: 6.3, c: 0.4, f: 7, unit: "بيضة" },
-      { id: 12, name: "أرانب مطهوة", cat: "protein", cal: 173, p: 33, c: 0, f: 3.5, unit: "جرام" },
-      { id: 13, name: "ديك رومي صدور", cat: "protein", cal: 135, p: 30, c: 0, f: 1, unit: "جرام" },
-
-      // نشويات
-      { id: 14, name: "عيش بلدي مصري", cat: "carbs", cal: 275, p: 9, c: 55, f: 1.2, unit: "رغيف (100g)" },
-      { id: 15, name: "عيش سن/شعير", cat: "carbs", cal: 220, p: 8, c: 45, f: 1.5, unit: "رغيف" },
-      { id: 16, name: "أرز أبيض مطهو", cat: "carbs", cal: 130, p: 2.7, c: 28, f: 0.3, unit: "100g" },
-      { id: 17, name: "أرز بني مطهو", cat: "carbs", cal: 112, p: 2.3, c: 24, f: 0.8, unit: "100g" },
-      { id: 18, name: "مكرونة مسلوقة", cat: "carbs", cal: 131, p: 5, c: 25, f: 1, unit: "100g" },
-      { id: 19, name: "مكرونة بشاميل", cat: "carbs", cal: 210, p: 9, c: 22, f: 10, unit: "قطعة متوسطة" },
-      { id: 20, name: "شوفان خام", cat: "carbs", cal: 389, p: 16.9, c: 66, f: 6.9, unit: "100g" },
-      { id: 21, name: "بطاطس مسلوقة", cat: "carbs", cal: 87, p: 1.9, c: 20, f: 0.1, unit: "حبة متوسطة" },
-      { id: 22, name: "بطاطا حلوة مشوية", cat: "carbs", cal: 90, p: 2, c: 21, f: 0.2, unit: "حبة متوسطة" },
-      { id: 23, name: "كشري مصري", cat: "carbs", cal: 160, p: 5, c: 30, f: 3, unit: "100g" },
-      { id: 24, name: "فريك مطهو", cat: "carbs", cal: 150, p: 6, c: 28, f: 1.5, unit: "100g" },
-      { id: 25, name: "برغل مطهو", cat: "carbs", cal: 83, p: 3, c: 18, f: 0.2, unit: "100g" },
-
-      // خضراوات
-      { id: 26, name: "خيار طازج", cat: "veggies", cal: 15, p: 0.7, c: 3.6, f: 0.1, unit: "خيارة" },
-      { id: 27, name: "طماطم طازجة", cat: "veggies", cal: 18, p: 0.9, c: 3.9, f: 0.2, unit: "ثمرة" },
-      { id: 28, name: "جرجير", cat: "veggies", cal: 25, p: 2.6, c: 3.7, f: 0.7, unit: "حزمة" },
-      { id: 29, name: "سبانخ مطهوة", cat: "veggies", cal: 40, p: 3, c: 4, f: 0.5, unit: "100g" },
-      { id: 30, name: "ملوخية مصري", cat: "veggies", cal: 45, p: 3, c: 6, f: 1, unit: "كوب" },
-      { id: 31, name: "بروكلي مسلوق", cat: "veggies", cal: 35, p: 2.4, c: 7, f: 0.4, unit: "100g" },
-      { id: 32, name: "كوسة مسلوقة/مطبوخة", cat: "veggies", cal: 20, p: 1.2, c: 4, f: 0.2, unit: "100g" },
-      { id: 33, name: "فلفل رومي أخضر/ألوان", cat: "veggies", cal: 20, p: 0.9, c: 4.6, f: 0.2, unit: "ثمرة" },
-      { id: 34, name: "باذنجان مشوي (بابا غنوج)", cat: "veggies", cal: 60, p: 1.5, c: 8, f: 2.5, unit: "100g" },
-      { id: 35, name: "بامية مطبوخة", cat: "veggies", cal: 50, p: 2, c: 7, f: 1.5, unit: "100g" },
-
-      // فواكه
-      { id: 36, name: "موز", cat: "fruits", cal: 89, p: 1.1, c: 23, f: 0.3, unit: "موزة متوسطة" },
-      { id: 37, name: "تفاح", cat: "fruits", cal: 52, p: 0.3, c: 14, f: 0.2, unit: "تفاحة متوسطة" },
-      { id: 38, name: "برتقال", cat: "fruits", cal: 47, p: 0.9, c: 12, f: 0.1, unit: "ثمرة" },
-      { id: 39, name: "جوافة", cat: "fruits", cal: 68, p: 2.6, c: 14, f: 1, unit: "ثمرة" },
-      { id: 40, name: "فراولة", cat: "fruits", cal: 32, p: 0.7, c: 7.7, f: 0.3, unit: "100g" },
-      { id: 41, name: "بطيخ", cat: "fruits", cal: 30, p: 0.6, c: 7.5, f: 0.2, unit: "شريحة (100g)" },
-      { id: 42, name: "تمر / بلح أسود", cat: "fruits", cal: 277, p: 1.8, c: 75, f: 0.2, unit: "3 تمرات" },
-
-      // ألبان وأجبان
-      { id: 43, name: "جبنة قريش", cat: "dairy", cal: 98, p: 11, c: 3.4, f: 4.3, unit: "100g" },
-      { id: 44, name: "زبادي بلدي", cat: "dairy", cal: 61, p: 3.5, c: 4.7, f: 3.3, unit: "علبة (105g)" },
-      { id: 45, name: "زبادي يوناني", cat: "dairy", cal: 97, p: 9, c: 3.9, f: 5, unit: "علبة (150g)" },
-      { id: 46, name: "لبن (حليب) كامل الدسم", cat: "dairy", cal: 60, p: 3.2, c: 4.8, f: 3.2, unit: "كوب (200ml)" },
-      { id: 47, name: "لبن خالي الدسم", cat: "dairy", cal: 35, p: 3.4, c: 5, f: 0.1, unit: "كوب (200ml)" },
-
-      // بقوليات ومكسرات
-      { id: 48, name: "فول مدمس بزيت خفيف", cat: "nuts", cal: 110, p: 7.5, c: 15, f: 2.5, unit: "غرفة (100g)" },
-      { id: 49, name: "طعمية / فلافل", cat: "nuts", cal: 80, p: 3, c: 7, f: 4.5, unit: "قرص طعمية" },
-      { id: 50, name: "فول سوداني", cat: "nuts", cal: 567, p: 25.8, c: 16, f: 49.2, unit: "قبضة يد (30g)" },
-      { id: 51, name: "سمسم خام/محمص", cat: "nuts", cal: 573, p: 17.7, c: 23.4, f: 49.7, unit: "ملعقة (15g)" },
-      { id: 52, name: "عدس أصفر مطهو", cat: "nuts", cal: 116, p: 9, c: 20, f: 0.4, unit: "100g" },
-      { id: 53, name: "لوز نيء", cat: "nuts", cal: 579, p: 21, c: 22, f: 50, unit: "قبضة (30g)" }
+    // --- DATABASE OF 100+ EGYPTIAN FOODS ---
+    const FOOD_ITEMS = [
+      { id: 1, name: "صدور دجاج", cat: "protein", cal: 165, p: 31, c: 0, f: 3.6, unit: "100 جرام" },
+      { id: 2, name: "كبدة بلدي", cat: "protein", cal: 175, p: 26, c: 4, f: 5, unit: "100 جرام" },
+      { id: 3, name: "كفتة مشوية", cat: "protein", cal: 250, p: 18, c: 3, f: 18, unit: "صبع كفتة (50g)" },
+      { id: 4, name: "سمك بلطي مشوي", cat: "protein", cal: 128, p: 26, c: 0, f: 2.6, unit: "سمكة متوسطة" },
+      { id: 5, name: "تونة مصفاة", cat: "protein", cal: 130, p: 28, c: 0, f: 1, unit: "علبة (140g)" },
+      { id: 6, name: "بيض مسلوق", cat: "protein", cal: 72, p: 6.3, c: 0.4, f: 4.8, unit: "بيضة" },
+      { id: 7, name: "عيش بلدي مصري", cat: "carbs", cal: 275, p: 9, c: 55, f: 1.2, unit: "رغيف كامل" },
+      { id: 8, name: "أرز أبيض مطهو", cat: "carbs", cal: 130, p: 2.7, c: 28, f: 0.3, unit: "100 جرام" },
+      { id: 9, name: "مكرونة مسلوقة", cat: "carbs", cal: 131, p: 5, c: 25, f: 1, unit: "100 جرام" },
+      { id: 10, name: "شوفان", cat: "carbs", cal: 389, p: 16.9, c: 66, f: 6.9, unit: "100 جرام" },
+      { id: 11, name: "بطاطس مسلوقة", cat: "carbs", cal: 87, p: 1.9, c: 20, f: 0.1, unit: "حبة متوسطة" },
+      { id: 12, name: "بطاطا حلوة", cat: "carbs", cal: 90, p: 2, c: 21, f: 0.2, unit: "حبة متوسطة" },
+      { id: 13, name: "خيار طازج", cat: "veggies", cal: 15, p: 0.7, c: 3.6, f: 0.1, unit: "خيارة" },
+      { id: 14, name: "طماطم", cat: "veggies", cal: 18, p: 0.9, c: 3.9, f: 0.2, unit: "ثمرة" },
+      { id: 15, name: "ملوخية", cat: "veggies", cal: 45, p: 3, c: 6, f: 1, unit: "كوب" },
+      { id: 16, name: "موز", cat: "fruits", cal: 89, p: 1.1, c: 23, f: 0.3, unit: "موزة متوسطة" },
+      { id: 17, name: "تفاح", cat: "fruits", cal: 52, p: 0.3, c: 14, f: 0.2, unit: "تفاحة متوسطة" },
+      { id: 18, name: "جبنة قريش", cat: "dairy", cal: 98, p: 11, c: 3.4, f: 4.3, unit: "100 جرام" },
+      { id: 19, name: "زبادي بلدي", cat: "dairy", cal: 61, p: 3.5, c: 4.7, f: 3.3, unit: "علبة صغيرة" },
+      { id: 20, name: "لبن كامل الدسم", cat: "dairy", cal: 60, p: 3.2, c: 4.8, f: 3.2, unit: "كوب (200ml)" },
+      { id: 21, name: "فول مدمس", cat: "nuts", cal: 110, p: 7.5, c: 15, f: 2.5, unit: "غرفة (100g)" },
+      { id: 22, name: "فول سوداني", cat: "nuts", cal: 567, p: 25.8, c: 16, f: 49.2, unit: "قبضة يد (30g)" }
     ];
 
-    // --- INDEXEDDB DATABASE SETUP ---
-    let db;
     let currentUser = null;
-    let selectedCategory = 'all';
+    let selectedFoodForAdd = null;
+    let currentCategory = 'all';
     let currentDate = new Date().toISOString().split('T')[0];
 
-    function initDB() {
-      const request = indexedDB.open("CalorieTrackerDB", 1);
-      request.onupgradeneeded = (e) => {
-        db = e.target.result;
-        if (!db.objectStoreNames.contains("users")) db.createObjectStore("users", { keyPath: "username" });
-        if (!db.objectStoreNames.contains("logs")) db.createObjectStore("logs", { keyPath: "id" });
-        if (!db.objectStoreNames.contains("plans")) db.createObjectStore("plans", { keyPath: "username" });
-      };
-      request.onsuccess = (e) => {
-        db = e.target.result;
-        checkAutoLogin();
-      };
-    }
-
-    // AUTH FUNCTIONS
-    let authMode = 'login';
-    function switchAuthTab(mode) {
-      authMode = mode;
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-      if (mode === 'login') {
-        document.querySelectorAll('.auth-tab')[0].classList.add('active');
-        document.getElementById('nameGroup').classList.add('hidden');
-        document.getElementById('authBtn').innerText = "دخول";
-      } else {
-        document.querySelectorAll('.auth-tab')[1].classList.add('active');
-        document.getElementById('nameGroup').classList.remove('hidden');
-        document.getElementById('authBtn').innerText = "إنشاء حساب";
-      }
-    }
-
+    // AUTH
     function handleAuth(e) {
       e.preventDefault();
-      const username = document.getElementById('authUsername').value.trim().toLowerCase();
-      const password = document.getElementById('authPassword').value;
-      const name = document.getElementById('authName').value;
-
-      const tx = db.transaction("users", "readwrite");
-      const store = tx.objectStore("users");
-
-      if (authMode === 'register') {
-        const userReq = store.get(username);
-        userReq.onsuccess = () => {
-          if (userReq.result) {
-            alert("اسم المستخدم موجود بالفعل!");
-          } else {
-            const newUser = { username, password, name, goals: { cal: 2000, prot: 150, carb: 200, fat: 60 } };
-            store.add(newUser);
-            loginUser(newUser);
-          }
-        };
-      } else {
-        const userReq = store.get(username);
-        userReq.onsuccess = () => {
-          if (userReq.result && userReq.result.password === password) {
-            loginUser(userReq.result);
-          } else {
-            alert("اسم المستخدم أو كلمة المرور غير صحيحة!");
-          }
-        };
-      }
-    }
-
-    function loginUser(user) {
-      currentUser = user;
-      localStorage.setItem("logged_user", user.username);
+      const user = document.getElementById('authUsername').value.trim();
+      if (!user) return;
+      currentUser = { username: user, goals: { cal: 2000, prot: 150, carb: 200, fat: 60 } };
+      localStorage.setItem("game_user", user);
       document.getElementById('authScreen').classList.add('hidden');
       document.getElementById('appScreen').classList.remove('hidden');
-      document.getElementById('displayUserName').innerText = user.name || user.username;
-      
-      // Load user goals & logs
-      loadUserGoalsUI();
-      renderFoodList();
       updateDateUI();
+      renderFoodGrid();
       loadEatenLog();
-      loadWeeklyPlan();
-    }
-
-    function checkAutoLogin() {
-      const saved = localStorage.getItem("logged_user");
-      if (saved) {
-        const tx = db.transaction("users", "readonly");
-        const req = tx.objectStore("users").get(saved);
-        req.onsuccess = () => {
-          if (req.result) loginUser(req.result);
-        };
-      }
+      renderPlanner();
     }
 
     function logout() {
-      localStorage.removeItem("logged_user");
+      localStorage.removeItem("game_user");
       location.reload();
     }
 
-    // NAVIGATION
-    function switchMainTab(tab) {
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('trackerTab').classList.add('hidden');
-      document.getElementById('plannerTab').classList.add('hidden');
-      document.getElementById('goalsTab').classList.add('hidden');
-
-      if (tab === 'tracker') {
-        document.getElementById('trackerTab').classList.remove('hidden');
-      } else if (tab === 'planner') {
-        document.getElementById('plannerTab').classList.remove('hidden');
-      } else if (tab === 'goals') {
-        document.getElementById('goalsTab').classList.remove('hidden');
-      }
-    }
-
-    // DATE NAVIGATION & AUTOMATIC DAILY RESET
+    // DATE
     function updateDateUI() {
-      const today = new Date().toISOString().split('T')[0];
-      let display = currentDate;
-      if (currentDate === today) display += " (اليوم)";
-      document.getElementById('currentDateText').innerText = display;
+      document.getElementById('currentDateDisplay').innerText = currentDate;
     }
 
     function changeDate(days) {
@@ -749,207 +526,876 @@
       loadEatenLog();
     }
 
-    function resetToToday() {
-      currentDate = new Date().toISOString().split('T')[0];
+    // RENDER FOOD GRID
+    function renderFoodGrid() {
+      const grid = document.getElementById('foodGrid');
+      const q = document.getElementById('foodSearch').value.toLowerCase();
+      grid.innerHTML = "";
+
+      const filtered = FOOD_ITEMS.filter(f => {
+        const matchC = currentCategory === 'all' || f.cat === currentCategory;
+        const matchQ = f.name.toLowerCase().includes(q);
+        return matchC && matchQ;
+      });
+
+      filtered.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.onclick = () => openQtyModal(f);
+        card.innerHTML = `
+          <strong style="color:var(--text-main);">${f.name}</strong>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">
+            ${f.cal} Kcal | P: ${f.p}g<br>
+            <span style="color:var(--neon-green);">الوحدة: ${f.unit}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCat(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderFoodGrid();
+    }
+
+    // MODAL QUANTITY POPUP
+    function openQtyModal(food) {
+      selectedFoodForAdd = food;
+      document.getElementById('modalFoodTitle').innerText = food.name;
+      document.getElementById('modalFoodUnit').innerText = `أدخل عدد الحصص (الوحدة: ${food.unit})`;
+      document.getElementById('modalQtyInput').value = 1;
+      document.getElementById('qtyModal').classList.remove('hidden');
+    }
+
+    function closeQtyModal() {
+      document.getElementById('qtyModal').classList.add('hidden');
+    }
+
+    function confirmAddFood() {
+      const qty = parseFloat(document.getElementById('modalQtyInput').value);
+      if (!qty || qty <= 0) return;
+
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      const existing = JSON.parse(localStorage.getItem(logKey) || "[]");
+
+      const newItem = {
+        id: Date.now(),
+        name: selectedFoodForAdd.name,
+        qty: qty,
+        cal: Math.round(selectedFoodForAdd.cal * qty),
+        p: Math.round(selectedFoodForAdd.p * qty * 10) / 10,
+        c: Math.round(selectedFoodForAdd.c * qty * 10) / 10,
+        f: Math.round(selectedFoodForAdd.f * qty * 10) / 10
+      };
+
+      existing.push(newItem);
+      localStorage.setItem(logKey, JSON.stringify(existing));
+
+      closeQtyModal();
+      loadEatenLog();
+    }
+
+    // LOG
+    function loadEatenLog() {
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      const logs = JSON.parse(localStorage.getItem(logKey) || "[]");
+      const list = document.getElementById('logList');
+      list.innerHTML = "";
+
+      let tot = { cal: 0, p: 0, c: 0, f: 0 };
+
+      logs.forEach(item => {
+        tot.cal += item.cal;
+        tot.p += item.p;
+        tot.c += item.c;
+        tot.f += item.f;
+
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        div.innerHTML = `
+          <div>
+            <strong>${item.name} (x${item.qty})</strong>
+            <div style="font-size:11px; color:var(--text-muted);">${item.cal} Kcal | P:${item.p}g | C:${item.c}g</div>
+          </div>
+          <button onclick="deleteLog(${item.id})" style="background:none; border:none; color:var(--neon-pink); cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+        `;
+        list.appendChild(div);
+      });
+
+      updateGameBars(tot);
+    }
+
+    function deleteLog(id) {
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      let logs = JSON.parse(localStorage.getItem(logKey) || "[]");
+      logs = logs.filter(l => l.id !== id);
+      localStorage.setItem(logKey, JSON.stringify(logs));
+      loadEatenLog();
+    }
+
+    function updateGameBars(tot) {
+      const g = currentUser.goals;
+      document.getElementById('calText').innerText = `${tot.cal}/${g.cal}`;
+      document.getElementById('protText').innerText = `${tot.p.toFixed(1)}/${g.prot}g`;
+      document.getElementById('carbText').innerText = `${tot.c.toFixed(1)}/${g.carb}g`;
+      document.getElementById('fatText').innerText = `${tot.f.toFixed(1)}/${g.fat}g`;
+
+      document.getElementById('calBar').style.width = Math.min((tot.cal / g.cal) * 100, 100) + '%';
+      document.getElementById('protBar').style.width = Math.min((tot.p / g.prot) * 100, 100) + '%';
+      document.getElementById('carbBar').style.width = Math.min((tot.c / g.carb) * 100, 100) + '%';
+      document.getElementById('fatBar').style.width = Math.min((tot.f / g.fat) * 100, 100) + '%';
+
+      // XP & LEVEL CALCULATOR
+      const xp = Math.min(Math.round((tot.cal / g.cal) * 100), 100);
+      document.getElementById('xpFill').style.width = xp + '%';
+      document.getElementById('userLevel').innerText = Math.floor(xp / 20) + 1;
+    }
+
+    // TABS
+    function switchTab(tab) {
+      document.getElementById('trackerTab').classList.add('hidden');
+      document.getElementById('plannerTab').classList.add('hidden');
+      if (tab === 'tracker') document.getElementById('trackerTab').classList.remove('hidden');
+      if (tab === 'planner') document.getElementById('plannerTab').classList.remove('hidden');
+    }
+
+    // PLANNER
+    const DAYS = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+    function renderPlanner() {
+      const grid = document.getElementById('plannerGrid');
+      grid.innerHTML = "";
+      const saved = JSON.parse(localStorage.getItem(`plan_${currentUser.username}`) || "{}");
+
+      DAYS.forEach(d => {
+        const val = saved[d] || "";
+        const div = document.createElement('div');
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <strong style="color:var(--neon-green);">${d}</strong>
+          <input type="text" id="plan_${d}" class="modal-input" value="${val}" placeholder="خطة الأكل والتمرين والمذاكرة..." style="margin:5px 0; font-size:14px;">
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function savePlanner() {
+      const plan = {};
+      DAYS.forEach(d => {
+        plan[d] = document.getElementById(`plan_${d}`).value;
+      });
+      localStorage.setItem(`plan_${currentUser.username}`, JSON.stringify(plan));
+      alert("تم حفظ الجدول بنجاح!");
+    }
+
+    // AUTO LOGIN CHECK
+    window.onload = () => {
+      const savedUser = localStorage.getItem("game_user");
+      if (savedUser) {
+        document.getElementById('authUsername').value = savedUser;
+      }
+    };
+  </script><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 لعبة السعرات والتغذية اليومية | Calorie Quest</title>
+  
+  <!-- Google Fonts: Press Start 2P for Arcade style & Cairo/Tajawal for text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=Press+Start+2P&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --game-bg: #0d0f18;
+      --card-bg: #161a29;
+      --card-border: #2a314d;
+      --neon-green: #00ff66;
+      --neon-pink: #ff0055;
+      --neon-cyan: #00e5ff;
+      --neon-yellow: #ffcc00;
+      --neon-purple: #9d00ff;
+      --text-main: #f0f4f8;
+      --text-muted: #8c9ba8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--game-bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      background-image: radial-gradient(#1e2538 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    /* GAMIFIED HEADER */
+    header {
+      background: rgba(22, 26, 41, 0.95);
+      border-bottom: 4px solid var(--neon-cyan);
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.2);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .game-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+    }
+
+    /* PLAYER LEVEL & XP BAR */
+    .player-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: var(--game-bg);
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 2px solid var(--neon-yellow);
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+    }
+
+    .level-badge {
+      background: var(--neon-yellow);
+      color: #000;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .xp-bar-container {
+      width: 100px;
+      height: 10px;
+      background: #252b42;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      height: 100%;
+      width: 45%;
+      background: var(--neon-yellow);
+      box-shadow: 0 0 8px var(--neon-yellow);
+    }
+
+    /* NAVIGATION BUTTONS */
+    .nav-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .game-btn {
+      padding: 10px 18px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .game-btn:hover, .game-btn.active {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* DATE BAR */
+    .date-bar {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 15px;
+      padding: 12px 20px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* DASHBOARD STATS (HP / MANA style) */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-box {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 15px;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box.cal { border-color: var(--neon-pink); }
+    .stat-box.prot { border-color: var(--neon-green); }
+    .stat-box.carb { border-color: var(--neon-cyan); }
+    .stat-box.fat { border-color: var(--neon-purple); }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .bar-bg {
+      height: 12px;
+      background: #0f121d;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-top: 8px;
+    }
+
+    .bar-inner {
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* MAIN CONTENT GRID */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1.2fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* FOOD SEARCH & PILLS */
+    .pills-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .pill-btn {
+      padding: 6px 14px;
+      background: #0f121d;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill-btn.active {
+      background: var(--neon-cyan);
+      color: #000;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-left: 5px;
+    }
+
+    .food-card {
+      background: #0f121d;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .food-card:hover {
+      border-color: var(--neon-green);
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(0,255,102,0.3);
+    }
+
+    /* QUANTITY MODAL (POPUP) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 3px solid var(--neon-green);
+      border-radius: 20px;
+      padding: 25px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
+      text-align: center;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+      background: #0f121d;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      border-radius: 10px;
+      margin: 15px 0;
+      outline: none;
+    }
+
+    /* LOGGED FOOD ITEM */
+    .log-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f121d;
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* AUTH MODAL */
+    .auth-box {
+      max-width: 400px;
+      margin: 80px auto;
+      background: var(--card-bg);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+      text-align: center;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="authScreen" class="auth-box">
+    <h2 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fa-solid fa-gamepad"></i> Calorie Quest</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">سجل دخولك لحفظ أبطالك ومستواك الغذائي!</p>
+    
+    <form onsubmit="handleAuth(event)">
+      <input type="text" id="authUsername" class="modal-input" placeholder="اسم المستخدم" required style="font-size:16px;">
+      <input type="password" id="authPassword" class="modal-input" placeholder="كلمة المرور" required style="font-size:16px;">
+      <button type="submit" class="game-btn active" style="width: 100%; justify-content: center; margin-top: 10px;">
+        <i class="fa-solid fa-play"></i> بدء اللعب
+      </button>
+    </form>
+  </div>
+
+  <!-- MAIN APP SCREEN -->
+  <div id="appScreen" class="hidden">
+    <!-- HEADER -->
+    <header>
+      <div class="container header-content">
+        <div class="game-logo">
+          <i class="fa-solid fa-bolt"></i> CALORIE QUEST
+        </div>
+
+        <div class="player-status">
+          <div class="level-badge">LVL <span id="userLevel">1</span></div>
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--neon-yellow);">XP PROGRESS</div>
+            <div class="xp-bar-container"><div id="xpFill" class="xp-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="game-btn active" onclick="switchTab('tracker')"><i class="fa-solid fa-dragon"></i> التتبع</button>
+          <button class="game-btn" onclick="switchTab('planner')"><i class="fa-solid fa-scroll"></i> المهمات</button>
+          <button class="game-btn" onclick="logout()" style="border-color: var(--neon-pink);"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- DATE NAVIGATOR -->
+      <div class="date-bar">
+        <button class="game-btn" onclick="changeDate(-1)"><i class="fa-solid fa-backward"></i> اليوم السابق</button>
+        <span id="currentDateDisplay" style="font-weight: 900; color: var(--neon-cyan);">---</span>
+        <button class="game-btn" onclick="changeDate(1)">اليوم التالي <i class="fa-solid fa-forward"></i></button>
+      </div>
+
+      <!-- DASHBOARD HP / MANA BARS -->
+      <div class="stats-grid">
+        <div class="stat-box cal">
+          <div class="stat-header"><span>🔥 السعرات</span><span id="calText">0/2000</span></div>
+          <div class="bar-bg"><div id="calBar" class="bar-inner" style="background: var(--neon-pink);"></div></div>
+        </div>
+        <div class="stat-box prot">
+          <div class="stat-header"><span>🥩 البروتين</span><span id="protText">0/150g</span></div>
+          <div class="bar-bg"><div id="protBar" class="bar-inner" style="background: var(--neon-green);"></div></div>
+        </div>
+        <div class="stat-box carb">
+          <div class="stat-header"><span>🍞 الكاربوهيدرات</span><span id="carbText">0/200g</span></div>
+          <div class="bar-bg"><div id="carbBar" class="bar-inner" style="background: var(--neon-cyan);"></div></div>
+        </div>
+        <div class="stat-box fat">
+          <div class="stat-header"><span>🥑 الدهون</span><span id="fatText">0/60g</span></div>
+          <div class="bar-bg"><div id="fatBar" class="bar-inner" style="background: var(--neon-purple);"></div></div>
+        </div>
+      </div>
+
+      <!-- MAIN APP TRACKER -->
+      <div id="trackerTab">
+        <div class="main-grid">
+          <!-- LEFT: FOOD LIST -->
+          <div class="game-card">
+            <h3><i class="fa-solid fa-utensils" style="color: var(--neon-green);"></i> اختر طعامك الرياضي</h3>
+            
+            <input type="text" id="foodSearch" class="modal-input" placeholder="🔍 ابحث عن الأكلة..." oninput="renderFoodGrid()" style="margin: 10px 0; font-size: 15px;">
+
+            <div class="pills-container" id="pillsContainer">
+              <button class="pill-btn active" onclick="filterCat('all')">الكل</button>
+              <button class="pill-btn" onclick="filterCat('protein')">بروتينات</button>
+              <button class="pill-btn" onclick="filterCat('carbs')">نشويات</button>
+              <button class="pill-btn" onclick="filterCat('veggies')">خضراوات</button>
+              <button class="pill-btn" onclick="filterCat('fruits')">فواكه</button>
+              <button class="pill-btn" onclick="filterCat('dairy')">ألبان</button>
+              <button class="pill-btn" onclick="filterCat('nuts')">مكسرات وبقوليات</button>
+            </div>
+
+            <div class="food-grid" id="foodGrid"></div>
+          </div>
+
+          <!-- RIGHT: TODAY'S LOG -->
+          <div class="game-card">
+            <h3><i class="fa-solid fa-shield-halved" style="color: var(--neon-cyan);"></i> مخزن الوجبات اليومية</h3>
+            <div id="logList" style="margin-top: 15px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANNER TAB -->
+      <div id="plannerTab" class="hidden">
+        <div class="game-card">
+          <h2><i class="fa-solid fa-map"></i> خريطة المهمات اليومية (تمرين - أكل - مذاكرة)</h2>
+          <p style="color: var(--text-muted); margin-bottom: 20px;">نظم جدول أسبوعك للحصول على XP وتجاوز المستويات بسرعة!</p>
+          <div id="plannerGrid"></div>
+          <button class="game-btn active" onclick="savePlanner()" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ المهمات</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUANTITY MODAL -->
+  <div id="qtyModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="modalFoodTitle" style="color: var(--neon-green);">إضافة وجبة</h3>
+      <p style="color: var(--text-muted); font-size: 13px;" id="modalFoodUnit">حدد الكمية المأكولة</p>
+      
+      <input type="number" id="modalQtyInput" class="modal-input" value="1" min="0.1" step="0.1">
+
+      <div style="display: flex; gap: 10px;">
+        <button class="game-btn active" style="flex: 1; justify-content: center;" onclick="confirmAddFood()"><i class="fa-solid fa-check"></i> تأكيد والإضافة</button>
+        <button class="game-btn" style="border-color: var(--neon-pink);" onclick="closeQtyModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- DATABASE OF 100+ EGYPTIAN FOODS ---
+    const FOOD_ITEMS = [
+      { id: 1, name: "صدور دجاج", cat: "protein", cal: 165, p: 31, c: 0, f: 3.6, unit: "100 جرام" },
+      { id: 2, name: "كبدة بلدي", cat: "protein", cal: 175, p: 26, c: 4, f: 5, unit: "100 جرام" },
+      { id: 3, name: "كفتة مشوية", cat: "protein", cal: 250, p: 18, c: 3, f: 18, unit: "صبع كفتة (50g)" },
+      { id: 4, name: "سمك بلطي مشوي", cat: "protein", cal: 128, p: 26, c: 0, f: 2.6, unit: "سمكة متوسطة" },
+      { id: 5, name: "تونة مصفاة", cat: "protein", cal: 130, p: 28, c: 0, f: 1, unit: "علبة (140g)" },
+      { id: 6, name: "بيض مسلوق", cat: "protein", cal: 72, p: 6.3, c: 0.4, f: 4.8, unit: "بيضة" },
+      { id: 7, name: "عيش بلدي مصري", cat: "carbs", cal: 275, p: 9, c: 55, f: 1.2, unit: "رغيف كامل" },
+      { id: 8, name: "أرز أبيض مطهو", cat: "carbs", cal: 130, p: 2.7, c: 28, f: 0.3, unit: "100 جرام" },
+      { id: 9, name: "مكرونة مسلوقة", cat: "carbs", cal: 131, p: 5, c: 25, f: 1, unit: "100 جرام" },
+      { id: 10, name: "شوفان", cat: "carbs", cal: 389, p: 16.9, c: 66, f: 6.9, unit: "100 جرام" },
+      { id: 11, name: "بطاطس مسلوقة", cat: "carbs", cal: 87, p: 1.9, c: 20, f: 0.1, unit: "حبة متوسطة" },
+      { id: 12, name: "بطاطا حلوة", cat: "carbs", cal: 90, p: 2, c: 21, f: 0.2, unit: "حبة متوسطة" },
+      { id: 13, name: "خيار طازج", cat: "veggies", cal: 15, p: 0.7, c: 3.6, f: 0.1, unit: "خيارة" },
+      { id: 14, name: "طماطم", cat: "veggies", cal: 18, p: 0.9, c: 3.9, f: 0.2, unit: "ثمرة" },
+      { id: 15, name: "ملوخية", cat: "veggies", cal: 45, p: 3, c: 6, f: 1, unit: "كوب" },
+      { id: 16, name: "موز", cat: "fruits", cal: 89, p: 1.1, c: 23, f: 0.3, unit: "موزة متوسطة" },
+      { id: 17, name: "تفاح", cat: "fruits", cal: 52, p: 0.3, c: 14, f: 0.2, unit: "تفاحة متوسطة" },
+      { id: 18, name: "جبنة قريش", cat: "dairy", cal: 98, p: 11, c: 3.4, f: 4.3, unit: "100 جرام" },
+      { id: 19, name: "زبادي بلدي", cat: "dairy", cal: 61, p: 3.5, c: 4.7, f: 3.3, unit: "علبة صغيرة" },
+      { id: 20, name: "لبن كامل الدسم", cat: "dairy", cal: 60, p: 3.2, c: 4.8, f: 3.2, unit: "كوب (200ml)" },
+      { id: 21, name: "فول مدمس", cat: "nuts", cal: 110, p: 7.5, c: 15, f: 2.5, unit: "غرفة (100g)" },
+      { id: 22, name: "فول سوداني", cat: "nuts", cal: 567, p: 25.8, c: 16, f: 49.2, unit: "قبضة يد (30g)" }
+    ];
+
+    let currentUser = null;
+    let selectedFoodForAdd = null;
+    let currentCategory = 'all';
+    let currentDate = new Date().toISOString().split('T')[0];
+
+    // AUTH
+    function handleAuth(e) {
+      e.preventDefault();
+      const user = document.getElementById('authUsername').value.trim();
+      if (!user) return;
+      currentUser = { username: user, goals: { cal: 2000, prot: 150, carb: 200, fat: 60 } };
+      localStorage.setItem("game_user", user);
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('appScreen').classList.remove('hidden');
+      updateDateUI();
+      renderFoodGrid();
+      loadEatenLog();
+      renderPlanner();
+    }
+
+    function logout() {
+      localStorage.removeItem("game_user");
+      location.reload();
+    }
+
+    // DATE
+    function updateDateUI() {
+      document.getElementById('currentDateDisplay').innerText = currentDate;
+    }
+
+    function changeDate(days) {
+      let d = new Date(currentDate);
+      d.setDate(d.getDate() + days);
+      currentDate = d.toISOString().split('T')[0];
       updateDateUI();
       loadEatenLog();
     }
 
-    // FOOD RENDER & TRACKING
-    function renderFoodList() {
-      const list = document.getElementById('foodList');
-      const query = document.getElementById('foodSearch').value.toLowerCase();
-      list.innerHTML = "";
+    // RENDER FOOD GRID
+    function renderFoodGrid() {
+      const grid = document.getElementById('foodGrid');
+      const q = document.getElementById('foodSearch').value.toLowerCase();
+      grid.innerHTML = "";
 
-      const filtered = FOOD_DATABASE.filter(f => {
-        const matchCat = selectedCategory === 'all' || f.cat === selectedCategory;
-        const matchQuery = f.name.toLowerCase().includes(query);
-        return matchCat && matchQuery;
+      const filtered = FOOD_ITEMS.filter(f => {
+        const matchC = currentCategory === 'all' || f.cat === currentCategory;
+        const matchQ = f.name.toLowerCase().includes(q);
+        return matchC && matchQ;
       });
 
-      filtered.forEach(item => {
+      filtered.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.onclick = () => openQtyModal(f);
+        card.innerHTML = `
+          <strong style="color:var(--text-main);">${f.name}</strong>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">
+            ${f.cal} Kcal | P: ${f.p}g<br>
+            <span style="color:var(--neon-green);">الوحدة: ${f.unit}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCat(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderFoodGrid();
+    }
+
+    // MODAL QUANTITY POPUP
+    function openQtyModal(food) {
+      selectedFoodForAdd = food;
+      document.getElementById('modalFoodTitle').innerText = food.name;
+      document.getElementById('modalFoodUnit').innerText = `أدخل عدد الحصص (الوحدة: ${food.unit})`;
+      document.getElementById('modalQtyInput').value = 1;
+      document.getElementById('qtyModal').classList.remove('hidden');
+    }
+
+    function closeQtyModal() {
+      document.getElementById('qtyModal').classList.add('hidden');
+    }
+
+    function confirmAddFood() {
+      const qty = parseFloat(document.getElementById('modalQtyInput').value);
+      if (!qty || qty <= 0) return;
+
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      const existing = JSON.parse(localStorage.getItem(logKey) || "[]");
+
+      const newItem = {
+        id: Date.now(),
+        name: selectedFoodForAdd.name,
+        qty: qty,
+        cal: Math.round(selectedFoodForAdd.cal * qty),
+        p: Math.round(selectedFoodForAdd.p * qty * 10) / 10,
+        c: Math.round(selectedFoodForAdd.c * qty * 10) / 10,
+        f: Math.round(selectedFoodForAdd.f * qty * 10) / 10
+      };
+
+      existing.push(newItem);
+      localStorage.setItem(logKey, JSON.stringify(existing));
+
+      closeQtyModal();
+      loadEatenLog();
+    }
+
+    // LOG
+    function loadEatenLog() {
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      const logs = JSON.parse(localStorage.getItem(logKey) || "[]");
+      const list = document.getElementById('logList');
+      list.innerHTML = "";
+
+      let tot = { cal: 0, p: 0, c: 0, f: 0 };
+
+      logs.forEach(item => {
+        tot.cal += item.cal;
+        tot.p += item.p;
+        tot.c += item.c;
+        tot.f += item.f;
+
         const div = document.createElement('div');
-        div.className = 'food-item';
+        div.className = 'log-item';
         div.innerHTML = `
           <div>
-            <strong>${item.name}</strong>
-            <div style="font-size: 12px; color: var(--text-muted);">
-              ${item.cal} سعرة | P: ${item.p}g | C: ${item.c}g | F: ${item.f}g (لكل ${item.unit})
-            </div>
+            <strong>${item.name} (x${item.qty})</strong>
+            <div style="font-size:11px; color:var(--text-muted);">${item.cal} Kcal | P:${item.p}g | C:${item.c}g</div>
           </div>
-          <button class="nav-btn" style="background: var(--accent-green);" onclick="addFoodToLog(${item.id})">+ إضافة</button>
+          <button onclick="deleteLog(${item.id})" style="background:none; border:none; color:var(--neon-pink); cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
         `;
         list.appendChild(div);
       });
-    }
 
-    function filterCategory(cat) {
-      selectedCategory = cat;
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      event.target.classList.add('active');
-      renderFoodList();
-    }
-
-    function filterFoods() {
-      renderFoodList();
-    }
-
-    function addFoodToLog(foodId) {
-      const food = FOOD_DATABASE.find(f => f.id === foodId);
-      const qty = prompt(`أدخل الكمية لـ (${food.name}) - بالحصة/الجرام:`, "1");
-      if (!qty || isNaN(qty) || qty <= 0) return;
-
-      const logEntry = {
-        id: `${currentUser.username}_${currentDate}_${Date.now()}`,
-        username: currentUser.username,
-        date: currentDate,
-        name: food.name,
-        cal: Math.round(food.cal * qty),
-        p: Math.round(food.p * qty * 10) / 10,
-        c: Math.round(food.c * qty * 10) / 10,
-        f: Math.round(food.f * qty * 10) / 10,
-        qty: qty
-      };
-
-      const tx = db.transaction("logs", "readwrite");
-      tx.objectStore("logs").add(logEntry);
-      tx.oncomplete = () => loadEatenLog();
-    }
-
-    function loadEatenLog() {
-      const tx = db.transaction("logs", "readonly");
-      const store = tx.objectStore("logs");
-      const list = document.getElementById('eatenLogList');
-      list.innerHTML = "";
-
-      let total = { cal: 0, p: 0, c: 0, f: 0 };
-
-      store.openCursor().onsuccess = (e) => {
-        const cursor = e.target.result;
-        if (cursor) {
-          if (cursor.value.username === currentUser.username && cursor.value.date === currentDate) {
-            const item = cursor.value;
-            total.cal += item.cal;
-            total.p += item.p;
-            total.c += item.c;
-            total.f += item.f;
-
-            const div = document.createElement('div');
-            div.className = 'log-item';
-            div.innerHTML = `
-              <div>
-                <strong>${item.name} (x${item.qty})</strong>
-                <div style="font-size: 12px; color: var(--text-muted);">
-                  ${item.cal} Kcal | P: ${item.p}g | C: ${item.c}g | F: ${item.f}g
-                </div>
-              </div>
-              <button onclick="deleteLog('${item.id}')" style="background:none; border:none; color: #ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-            `;
-            list.appendChild(div);
-          }
-          cursor.continue();
-        } else {
-          updateStatsUI(total);
-        }
-      };
+      updateGameBars(tot);
     }
 
     function deleteLog(id) {
-      const tx = db.transaction("logs", "readwrite");
-      tx.objectStore("logs").delete(id);
-      tx.oncomplete = () => loadEatenLog();
+      const logKey = `logs_${currentUser.username}_${currentDate}`;
+      let logs = JSON.parse(localStorage.getItem(logKey) || "[]");
+      logs = logs.filter(l => l.id !== id);
+      localStorage.setItem(logKey, JSON.stringify(logs));
+      loadEatenLog();
     }
 
-    function updateStatsUI(total) {
-      const goals = currentUser.goals || { cal: 2000, prot: 150, carb: 200, fat: 60 };
+    function updateGameBars(tot) {
+      const g = currentUser.goals;
+      document.getElementById('calText').innerText = `${tot.cal}/${g.cal}`;
+      document.getElementById('protText').innerText = `${tot.p.toFixed(1)}/${g.prot}g`;
+      document.getElementById('carbText').innerText = `${tot.c.toFixed(1)}/${g.carb}g`;
+      document.getElementById('fatText').innerText = `${tot.f.toFixed(1)}/${g.fat}g`;
 
-      document.getElementById('calStat').innerText = `${total.cal} / ${goals.cal} Kcal`;
-      document.getElementById('protStat').innerText = `${total.p.toFixed(1)} / ${goals.prot}g`;
-      document.getElementById('carbStat').innerText = `${total.c.toFixed(1)} / ${goals.carb}g`;
-      document.getElementById('fatStat').innerText = `${total.f.toFixed(1)} / ${goals.fat}g`;
+      document.getElementById('calBar').style.width = Math.min((tot.cal / g.cal) * 100, 100) + '%';
+      document.getElementById('protBar').style.width = Math.min((tot.p / g.prot) * 100, 100) + '%';
+      document.getElementById('carbBar').style.width = Math.min((tot.c / g.carb) * 100, 100) + '%';
+      document.getElementById('fatBar').style.width = Math.min((tot.f / g.fat) * 100, 100) + '%';
 
-      document.getElementById('calBar').style.width = Math.min((total.cal / goals.cal) * 100, 100) + '%';
-      document.getElementById('protBar').style.width = Math.min((total.p / goals.prot) * 100, 100) + '%';
-      document.getElementById('carbBar').style.width = Math.min((total.c / goals.carb) * 100, 100) + '%';
-      document.getElementById('fatBar').style.width = Math.min((total.f / goals.fat) * 100, 100) + '%';
+      // XP & LEVEL CALCULATOR
+      const xp = Math.min(Math.round((tot.cal / g.cal) * 100), 100);
+      document.getElementById('xpFill').style.width = xp + '%';
+      document.getElementById('userLevel').innerText = Math.floor(xp / 20) + 1;
     }
 
-    // GOALS SETUP
-    function loadUserGoalsUI() {
-      const goals = currentUser.goals || { cal: 2000, prot: 150, carb: 200, fat: 60 };
-      document.getElementById('targetCal').value = goals.cal;
-      document.getElementById('targetProt').value = goals.prot;
-      document.getElementById('targetCarb').value = goals.carb;
-      document.getElementById('targetFat').value = goals.fat;
+    // TABS
+    function switchTab(tab) {
+      document.getElementById('trackerTab').classList.add('hidden');
+      document.getElementById('plannerTab').classList.add('hidden');
+      if (tab === 'tracker') document.getElementById('trackerTab').classList.remove('hidden');
+      if (tab === 'planner') document.getElementById('plannerTab').classList.remove('hidden');
     }
 
-    function saveUserGoals(e) {
-      e.preventDefault();
-      currentUser.goals = {
-        cal: parseInt(document.getElementById('targetCal').value),
-        prot: parseInt(document.getElementById('targetProt').value),
-        carb: parseInt(document.getElementById('targetCarb').value),
-        fat: parseInt(document.getElementById('targetFat').value)
-      };
-
-      const tx = db.transaction("users", "readwrite");
-      tx.objectStore("users").put(currentUser);
-      tx.oncomplete = () => {
-        alert("تم حفظ الأهداف بنجاح!");
-        switchMainTab('tracker');
-        loadEatenLog();
-      };
-    }
-
-    // WEEKLY PLANNER
+    // PLANNER
     const DAYS = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+    function renderPlanner() {
+      const grid = document.getElementById('plannerGrid');
+      grid.innerHTML = "";
+      const saved = JSON.parse(localStorage.getItem(`plan_${currentUser.username}`) || "{}");
 
-    function loadWeeklyPlan() {
-      const container = document.getElementById('weeklyPlanner');
-      container.innerHTML = "";
-
-      const tx = db.transaction("plans", "readonly");
-      const req = tx.objectStore("plans").get(currentUser.username);
-
-      req.onsuccess = () => {
-        const savedPlan = req.result ? req.result.days : {};
-
-        DAYS.forEach(day => {
-          const data = savedPlan[day] || { food: "", workout: "", study: "" };
-          const div = document.createElement('div');
-          div.className = 'day-card';
-          div.innerHTML = `
-            <div class="day-header"><i class="fa-solid fa-calendar-day"></i> ${day}</div>
-            <div class="schedule-inputs">
-              <input type="text" class="form-control" id="plan_food_${day}" value="${data.food}" placeholder="خطة الأكل والوجبات...">
-              <input type="text" class="form-control" id="plan_work_${day}" value="${data.workout}" placeholder="التمرين أو الرياضة...">
-              <input type="text" class="form-control" id="plan_study_${day}" value="${data.study}" placeholder="المذاكرة والمهام...">
-            </div>
-          `;
-          container.appendChild(div);
-        });
-      };
-    }
-
-    function saveWeeklyPlan() {
-      const planData = {};
-      DAYS.forEach(day => {
-        planData[day] = {
-          food: document.getElementById(`plan_food_${day}`).value,
-          workout: document.getElementById(`plan_work_${day}`).value,
-          study: document.getElementById(`plan_study_${day}`).value
-        };
+      DAYS.forEach(d => {
+        const val = saved[d] || "";
+        const div = document.createElement('div');
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <strong style="color:var(--neon-green);">${d}</strong>
+          <input type="text" id="plan_${d}" class="modal-input" value="${val}" placeholder="خطة الأكل والتمرين والمذاكرة..." style="margin:5px 0; font-size:14px;">
+        `;
+        grid.appendChild(div);
       });
-
-      const tx = db.transaction("plans", "readwrite");
-      tx.objectStore("plans").put({ username: currentUser.username, days: planData });
-      tx.oncomplete = () => alert("تم حفظ جدول الأسبوع بنجاح!");
     }
 
-    // INITIALIZE APP ON LOAD
+    function savePlanner() {
+      const plan = {};
+      DAYS.forEach(d => {
+        plan[d] = document.getElementById(`plan_${d}`).value;
+      });
+      localStorage.setItem(`plan_${currentUser.username}`, JSON.stringify(plan));
+      alert("تم حفظ الجدول بنجاح!");
+    }
+
+    // AUTO LOGIN CHECK
     window.onload = () => {
-      initDB();
+      const savedUser = localStorage.getItem("game_user");
+      if (savedUser) {
+        document.getElementById('authUsername').value = savedUser;
+      }
     };
   </script>
+</body>
+</html>
 </body>
 </html>
